@@ -1,0 +1,6 @@
+@Avalanche.Interface.Authentication_HostAddress = http://localhost:5116
+
+GET {{Avalanche.Interface.Authentication_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
