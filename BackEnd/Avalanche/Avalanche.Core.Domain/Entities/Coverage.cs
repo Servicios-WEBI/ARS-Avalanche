@@ -1,0 +1,16 @@
+﻿using Avalanche.Core.Domain.Common;
+
+namespace Avalanche.Core.Domain.Entities
+{
+    public class Coverage : AuditableBaseEntity
+    {
+        public string Name { get; set; }
+        public string CoverageType { get; set; }
+        public string? Description { get; set; }
+        public List<PlanCoverage> PlanCoverages { get; set; }
+
+        public Coverage() {
+            this.Id = "";
+        }
+    }
+}
