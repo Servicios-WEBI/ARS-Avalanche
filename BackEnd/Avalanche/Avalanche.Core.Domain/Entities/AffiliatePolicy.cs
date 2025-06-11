@@ -7,7 +7,8 @@ namespace Avalanche.Core.Domain.Entities
         public bool IsPrincipal { get; set; }
         public DateOnly AffiliationDate { get; set; }
         public DateOnly? DesAffiliationDate { get; set; }
-        public string Status { get; set; }
+        public Status Status { get; set; }
+        public string StatusId { get; set; }
         public Affiliate Affiliate { get; set; }
         public string AffiliateId { get; set; }
         public Policy Policy { get; set; }

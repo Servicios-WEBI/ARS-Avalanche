@@ -5,8 +5,10 @@ namespace Avalanche.Core.Domain.Entities
     public class Authorization : AuditableBaseEntity
     {
         public DateOnly ApplicationDate { get; set; }
-        public string Status { get; set; }
-        public string Type { get; set; }
+        public Status Status { get; set; }
+        public string StatusId { get; set; }
+        public AuthorizationType AuthorizationType { get; set; }
+        public string AuthorizationTypeId { get; set; }
         public double ApplicationAmount { get; set; }
         public double? ApprovedAmount { get; set; }
         public Affiliate Affiliate { get; set; }
