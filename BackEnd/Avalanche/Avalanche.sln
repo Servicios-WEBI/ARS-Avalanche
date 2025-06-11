@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalanche.Core.Domain", "Avalanche.Core.Domain\Avalanche.Core.Domain.csproj", "{82F7CFE0-D960-4D71-9FB0-FA15D2712B44}"
 EndProject
@@ -20,6 +20,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalanche.Infrastructure.Identity", "Avalanche.Infrastructure.Identity\Avalanche.Infrastructure.Identity.csproj", "{1D2C4B9D-CE60-4CB5-857C-37CABCD232F1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalanche.Interface.Authentication", "Avalanche.Interface.Authentication\Avalanche.Interface.Authentication.csproj", "{DDDC2947-AD00-4C0F-BBFE-601C9C1EEF52}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalanche.Interface.BusinessApi", "Avalanche.Interface.BusinessApi\Avalanche.Interface.BusinessApi.csproj", "{498DE134-D5F0-47DB-AEDC-64B9FCD0F7BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{DDDC2947-AD00-4C0F-BBFE-601C9C1EEF52}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DDDC2947-AD00-4C0F-BBFE-601C9C1EEF52}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DDDC2947-AD00-4C0F-BBFE-601C9C1EEF52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{498DE134-D5F0-47DB-AEDC-64B9FCD0F7BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{498DE134-D5F0-47DB-AEDC-64B9FCD0F7BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{498DE134-D5F0-47DB-AEDC-64B9FCD0F7BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{498DE134-D5F0-47DB-AEDC-64B9FCD0F7BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,5 +68,6 @@ Global
 		{320DE5AE-6800-474B-BC91-10F1E32ED2FA} = {696189FE-2BF6-4587-9D29-017117F1DBE7}
 		{1D2C4B9D-CE60-4CB5-857C-37CABCD232F1} = {696189FE-2BF6-4587-9D29-017117F1DBE7}
 		{DDDC2947-AD00-4C0F-BBFE-601C9C1EEF52} = {DF666F3E-9E74-4251-9F14-145BBB5CEE2A}
+		{498DE134-D5F0-47DB-AEDC-64B9FCD0F7BD} = {DF666F3E-9E74-4251-9F14-145BBB5CEE2A}
 	EndGlobalSection
 EndGlobal

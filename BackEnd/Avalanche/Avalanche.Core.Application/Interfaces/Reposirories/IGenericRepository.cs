@@ -9,7 +9,6 @@ namespace Avalanche.Core.Application.Interfaces.Repositories
         Task UpdateAsync(Entity entity, string id);
 		Task DeleteAsync(Entity entity);
 		Task DeleteManyAsync(List<Entity> entities);
-
         Task<List<Entity>> GetAllAsync();
 		Task<Entity> GetByIdAsync(string id);
 		Task<List<Entity>> GetAllWithIncludeAsync(List<Expression<Func<Entity, object>>> properties);

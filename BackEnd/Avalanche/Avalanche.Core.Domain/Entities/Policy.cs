@@ -7,7 +7,8 @@ namespace Avalanche.Core.Domain.Entities
         public string Number { get; set; }
         public DateOnly EffectiveStartDate { get; set; }
         public DateOnly EffectiveEndDate { get; set; }
-        public string Status { get; set; }
+        public Status Status { get; set; }
+        public string StatusId { get; set; }
         public Client Client { get; set; }
         public string ClientId { get; set; }
         public Plan Plan { get; set; }
