@@ -4,6 +4,7 @@ using Avalanche.Infrastructure.Identity.Entities;
 using Avalanche.Infrastructure.Identity.Seeds;
 using Avalanche.Infrastructure.Persistence;
 using Avalanche.Infrastructure.Shared;
+using Avalanche.Interface.Authentication.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;

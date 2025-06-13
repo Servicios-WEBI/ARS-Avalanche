@@ -30,4 +30,8 @@
     <ProjectReference Include="..\Avalanche.Infrastructure.Shared\Avalanche.Infrastructure.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\v1\" />
+  </ItemGroup>
+
 </Project>
