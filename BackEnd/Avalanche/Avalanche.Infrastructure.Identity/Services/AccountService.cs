@@ -117,7 +117,7 @@ namespace Avalanche.Infrastructure.Identity.Services
                 var result = await _userManager.CreateAsync(user, request.Password);
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, Roles.Client.ToString());
+                    await _userManager.AddToRoleAsync(user, Roles.Analyst.ToString());
                     var verificationUri = await SendVerificationEmailUri(user);
                     await _emailService.SendAsync(new EmailRequest()
                     {
