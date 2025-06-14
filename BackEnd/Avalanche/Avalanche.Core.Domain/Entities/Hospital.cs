@@ -10,8 +10,5 @@ namespace Avalanche.Core.Domain.Entities
         public Status Status { get; set; }
         public string StatusId { get; set; }
         public List<Authorization> Authorizations { get; set; }
-        public Hospital() {
-            this.Id = "";
-        }
     }
 }

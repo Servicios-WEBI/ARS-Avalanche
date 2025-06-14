@@ -28,7 +28,6 @@ namespace Avalanche.Infrastructure.Persistence.Contexts
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entry.Entity.Id = Guid.NewGuid().ToString().Substring(5, 8);
                         entry.Entity.Created = DateTime.UtcNow;
                         entry.Entity.CreatedBy = "DefaultBaseUser";
                         break;

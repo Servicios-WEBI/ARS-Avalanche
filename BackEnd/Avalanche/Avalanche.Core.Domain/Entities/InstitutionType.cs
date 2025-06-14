@@ -6,9 +6,5 @@ namespace Avalanche.Core.Domain.Entities
     {
         public string Name { get; set; }
         public List<Hospital> Hospitals { get; set; }
-
-        public InstitutionType() {
-            this.Id = "";
-        }
     }
 }

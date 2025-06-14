@@ -11,9 +11,5 @@ namespace Avalanche.Core.Domain.Entities
         public string PlanId { get; set; }
         public Coverage Coverage { get; set; }
         public string CoverageId { get; set; }
-
-        public PlanCoverage() {
-            this.Id = "";
-        }
     }
 }

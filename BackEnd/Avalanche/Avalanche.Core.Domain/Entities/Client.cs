@@ -18,9 +18,5 @@ namespace Avalanche.Core.Domain.Entities
         public string StatusId { get; set; }
         public List<Affiliate> Affiliates { get; set; }
         public List<Policy> Policies { get; set; }
-
-        public Client() {
-            this.Id = "";
-        }
     }
 }

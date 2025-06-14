@@ -7,9 +7,5 @@ namespace Avalanche.Core.Domain.Entities
         public string Name { get; set; }
         public string? Description { get; set; }
         public List<PlanCoverage> PlanCoverages { get; set; }
-
-        public Coverage() {
-            this.Id = "";
-        }
     }
 }

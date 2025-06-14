@@ -7,5 +7,10 @@
 		public DateTime Created { get; set; }
 		public string? LastModifiedBy { get; set; }
 		public DateTime? LastModified { get; set; }
+
+		public AuditableBaseEntity ()
+		{
+			Id = Guid.NewGuid().ToString().Substring(2, 12);
+        }
 	}
 }
