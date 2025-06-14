@@ -1,11 +1,11 @@
+using AutoMapper;
 using Avalanche.Core.Application;
+using Avalanche.Core.Application.Interfaces.Reposirories;
+using Avalanche.Core.Application.Seeds;
 using Avalanche.Infrastructure.Identity;
-using Avalanche.Infrastructure.Identity.Entities;
-using Avalanche.Infrastructure.Identity.Seeds;
 using Avalanche.Infrastructure.Persistence;
 using Avalanche.Infrastructure.Shared;
 using Avalanche.Interface.BusinessApi.Extensions;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 
@@ -71,6 +71,8 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 // Build the application
 var app = builder.Build();
 
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
@@ -103,23 +105,36 @@ if (builder.Configuration.GetValue<bool>("InitialRun"))
     using (var scope = app.Services.CreateScope())
     {
         var services = scope.ServiceProvider;
+        var planPath = Path.Combine(app.Environment.ContentRootPath, "DataSeeds", "PlanSeed.csv");
+        var planCoveragePath = Path.Combine(app.Environment.ContentRootPath, "DataSeeds", "PlanCoverageSeed.csv");
 
         try
         {
-            #region Identity
-            var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-
-            await DefaultRoles.SeedAsync(userManager, roleManager);
-            await DefaultSuperAdminUser.SeedAsync(userManager, roleManager);
-            #endregion
-
             #region Application
+            var authorizationType = services.GetRequiredService<IAuthorizationTypeRepository>();
+            var coverage = services.GetRequiredService<ICoverageRepository>();
+            var documentType = services.GetRequiredService<IDocumentTypeRepository>();
+            var institutionType = services.GetRequiredService<IInstitutionTypeRepository>();
+            var plan = services.GetRequiredService<IPlanRepository>();
+            var planCoverage = services.GetRequiredService<IPlanCoverageRepository>();
+            var status = services.GetRequiredService<IStatusRepository>();
+            var mapper = services.GetRequiredService<IMapper>();
+
+            await DefaultAuthorizationType.SeedAsync(authorizationType);
+            await DefaultCoverage.SeedAsync(coverage);
+            await DefaultDocumentType.SeedAsync(documentType);
+            await DefaultInstitutionType.SeedAsync(institutionType);
+            await DefaultPlan.SeedAsync(plan, planPath, mapper);
+            await DefaultPlanCoverage.SeedAsync(planCoverage, planCoveragePath, plan, coverage);
+            await DefaultStatus.SeedAsync(status);
+
             #endregion
+
+            logger.LogInformation("La carga inicial se completó satisfactoriamente");
         }
         catch (Exception ex)
         {
-            // Handle exceptions
+            logger.LogError(ex, "Hubo un error completando la carga inicial");
         }
     }
 }

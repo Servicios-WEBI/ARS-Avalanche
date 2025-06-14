@@ -113,9 +113,6 @@ if (builder.Configuration.GetValue<bool>("InitialRun"))
             await DefaultRoles.SeedAsync(userManager, roleManager);
             await DefaultSuperAdminUser.SeedAsync(userManager, roleManager);
             #endregion
-
-            #region Application
-            #endregion
         }
         catch (Exception ex)
         {

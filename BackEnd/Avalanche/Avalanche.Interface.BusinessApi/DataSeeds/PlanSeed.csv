@@ -1,0 +1,4 @@
+Id,Name,Description,MonthlyCost
+,Plan Basico,"Cobertura esencial para consultas generales y emergencias.",1500.00
+,Plan Estandar,"Incluye consultas especializadas, medicamentos basicos y hospitalizacion.",2800.00
+,Plan Premium,"Cobertura amplia sin límites en consultas, hospitalizacion completa y medicamentos de alto costo.",5000.00

@@ -1,0 +1,15 @@
+Id,PlanName,CoverageName,AmountLimit,YearFrequencyLimit,CoveragePercentage
+,Plan Basico,Consulta General,5000.00,10,80.00
+,Plan Basico,Atencion de Urgencias,10000.00,5,90.00
+,Plan Basico,Medicamentos,3000.00,12,70.00
+,Plan Estandar,Consulta General,8000.00,20,90.00
+,Plan Estandar,Consulta Especializada,12000.00,15,85.00
+,Plan Estandar,Hospitalizacion,25000.00,5,80.00
+,Plan Estandar,Medicamentos,8000.00,20,80.00
+,Plan Premium,Consulta General,15000.00,0,100.00
+,Plan Premium,Consulta Especializada,25000.00,0,100.00
+,Plan Premium,Hospitalizacion,100000.00,0,100.00
+,Plan Premium,Medicamentos,30000.00,0,100.00
+,Plan Premium,Atencion de Urgencias,50000.00,0,100.00
+,Plan Premium,Examenes de Laboratorio,20000.00,0,100.00
+,Plan Premium,Estudios de Imagenes,30000.00,0,100.00

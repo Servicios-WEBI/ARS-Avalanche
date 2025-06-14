@@ -10,7 +10,7 @@
 
 		public AuditableBaseEntity ()
 		{
-			Id = Guid.NewGuid().ToString().Substring(2, 12);
+			Id = Guid.NewGuid().ToString().Substring(0, 12);
         }
 	}
 }
