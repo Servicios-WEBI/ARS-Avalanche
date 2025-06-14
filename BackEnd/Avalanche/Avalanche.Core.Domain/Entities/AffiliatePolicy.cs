@@ -13,9 +13,5 @@ namespace Avalanche.Core.Domain.Entities
         public string AffiliateId { get; set; }
         public Policy Policy { get; set; }
         public string PolicyId { get; set; }
-
-        public AffiliatePolicy() {
-            this.Id = "";
-        }
     }
 }

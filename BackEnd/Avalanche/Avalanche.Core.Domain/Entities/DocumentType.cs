@@ -12,10 +12,5 @@ namespace Avalanche.Core.Domain.Entities
         public string Name { get; set; }
         public List<Affiliate> Affiliates { get; set; }
         public List<Client> Clients { get; set; }
-
-        public DocumentType()
-        {
-            this.Id = "";
-        }
     }
 }

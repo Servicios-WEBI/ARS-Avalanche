@@ -1,4 +1,5 @@
 ﻿using Avalanche.Core.Domain.Common;
+using Avalanche.Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Avalanche.Infrastructure.Persistence.Contexts
@@ -6,6 +7,19 @@ namespace Avalanche.Infrastructure.Persistence.Contexts
     public class ApplicationContext : DbContext
     {
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
+        public DbSet<Affiliate> Affiliate { get; set; }
+        public DbSet<AffiliatePolicy> AffiliatePolicie { get; set; }
+        public DbSet<Authorization> Authorization { get; set; }
+        public DbSet<AuthorizationType> AuthorizationType { get; set; }
+        public DbSet<Client> Client { get; set; }
+        public DbSet<Coverage> Coverage { get; set; }
+        public DbSet<DocumentType> DocumentType { get; set; }
+        public DbSet<Hospital> Hospital { get; set; }
+        public DbSet<InstitutionType> InstitutionType { get; set; }
+        public DbSet<Plan> Plan { get; set; }
+        public DbSet<PlanCoverage> PlanCoverage { get; set; }
+        public DbSet<Policy> Policy { get; set; }
+        public DbSet<Status> Status { get; set; }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
@@ -14,7 +28,6 @@ namespace Avalanche.Infrastructure.Persistence.Contexts
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entry.Entity.Id = Guid.NewGuid().ToString().Substring(5, 8);
                         entry.Entity.Created = DateTime.UtcNow;
                         entry.Entity.CreatedBy = "DefaultBaseUser";
                         break;
@@ -34,12 +47,207 @@ namespace Avalanche.Infrastructure.Persistence.Contexts
             base.OnModelCreating(modelBuilder);
 
             #region Tables
+            modelBuilder.Entity<Affiliate>()
+                .ToTable("Affiliates");
+
+            modelBuilder.Entity<AffiliatePolicy>()
+                .ToTable("AffiliatePolicies");
+
+            modelBuilder.Entity<Authorization>()
+                .ToTable("Authorizations");
+
+            modelBuilder.Entity<AuthorizationType>()
+                .ToTable("AuthorizationTypes");
+
+            modelBuilder.Entity<Client>()
+                .ToTable("Clients");
+
+            modelBuilder.Entity<Coverage>()
+                .ToTable("Coverages");
+
+            modelBuilder.Entity<DocumentType>()
+                .ToTable("DocumentTypes");
+
+            modelBuilder.Entity<Hospital>()
+                .ToTable("Hospitals");
+
+            modelBuilder.Entity<InstitutionType>()
+                .ToTable("InstitutionTypes");
+
+            modelBuilder.Entity<Plan>()
+                .ToTable("Plans");
+
+            modelBuilder.Entity<PlanCoverage>()
+                .ToTable("PlanCoverages");
+
+            modelBuilder.Entity<Policy>()
+                .ToTable("Policies");
+
+            modelBuilder.Entity<Status>()
+                .ToTable("Statuses");
             #endregion
 
             #region Primary keys
+            modelBuilder.Entity<Affiliate>()
+                .HasKey(x => x.Id);
+
+            modelBuilder.Entity<AffiliatePolicy>()
+                .HasKey(x => x.Id);
+
+            modelBuilder.Entity<Authorization>()
+                .HasKey(x => x.Id);
+
+            modelBuilder.Entity<AuthorizationType>()
+                .HasKey(x => x.Id);
+
+            modelBuilder.Entity<Client>()
+                .HasKey(x => x.Id);
+
+            modelBuilder.Entity<Coverage>()
+                .HasKey(x => x.Id);
+
+            modelBuilder.Entity<DocumentType>()
+                .HasKey(x => x.Id);
+
+            modelBuilder.Entity<Hospital>()
+                .HasKey(x => x.Id);
+
+            modelBuilder.Entity<InstitutionType>()
+                .HasKey(x => x.Id);
+
+            modelBuilder.Entity<Plan>()
+                .HasKey(x => x.Id);
+
+            modelBuilder.Entity<PlanCoverage>()
+                .HasKey(x => x.Id);
+
+            modelBuilder.Entity<Policy>()
+                .HasKey(x => x.Id);
+
+            modelBuilder.Entity<Status>()
+                .HasKey(x => x.Id);
             #endregion
 
             #region Relationships
+            modelBuilder.Entity<Affiliate>()
+                .HasOne<Client>(x => x.Client)
+                .WithMany(x => x.Affiliates)
+                .HasForeignKey(x => x.ClientId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Affiliate>()
+                .HasOne<DocumentType>(x => x.DocumentType)
+                .WithMany(x => x.Affiliates)
+                .HasForeignKey(x => x.DocumentTypeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Affiliate>()
+                .HasOne<Status>(x => x.Status)
+                .WithMany(x => x.Affiliates)
+                .HasForeignKey(x => x.StatusId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Affiliate>()
+                .HasMany<AffiliatePolicy>(x => x.AffiliatePolicies)
+                .WithOne(x => x.Affiliate)
+                .HasForeignKey(x => x.AffiliateId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Affiliate>()
+                .HasMany<Authorization>(x => x.Authorizations)
+                .WithOne(x => x.Affiliate)
+                .HasForeignKey(x => x.AffiliateId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AffiliatePolicy>()
+                .HasOne<Policy>(x => x.Policy)
+                .WithMany(x => x.AffiliatePolicies)
+                .HasForeignKey(x => x.PolicyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AffiliatePolicy>()
+                .HasOne<Status>(x => x.Status)
+                .WithMany(x => x.AffiliatePolicies)
+                .HasForeignKey(x => x.StatusId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Authorization>()
+                .HasOne<Status>(x => x.Status)
+                .WithMany(x => x.Authorizations)
+                .HasForeignKey(x => x.StatusId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Authorization>()
+                .HasOne<AuthorizationType>(x => x.AuthorizationType)
+                .WithMany(x => x.Authorizations)
+                .HasForeignKey(x => x.AuthorizationTypeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Authorization>()
+                .HasOne<Policy>(x => x.Policy)
+                .WithMany(x => x.Authorizations)
+                .HasForeignKey(x => x.PolicyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Authorization>()
+                .HasOne<Hospital>(x => x.Hospital)
+                .WithMany(x => x.Authorizations)
+                .HasForeignKey(x => x.HospitalId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Client>()
+                .HasOne<DocumentType>(x => x.DocumentType)
+                .WithMany(x => x.Clients)
+                .HasForeignKey(x => x.DocumentTypeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Client>()
+                .HasOne<Status>(x => x.Status)
+                .WithMany(x => x.Clients)
+                .HasForeignKey(x => x.StatusId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Client>()
+                .HasMany<Policy>(x => x.Policies)
+                .WithOne(x => x.Client)
+                .HasForeignKey(x => x.ClientId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Coverage>()
+                .HasMany<PlanCoverage>(x => x.PlanCoverages)
+                .WithOne(x => x.Coverage)
+                .HasForeignKey(x => x.CoverageId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Hospital>()
+                .HasOne<InstitutionType>(x => x.InstitutionType)
+                .WithMany(x => x.Hospitals)
+                .HasForeignKey(x => x.InstitutionTypeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Hospital>()
+                .HasOne<Status>(x => x.Status)
+                .WithMany(x => x.Hospitals)
+                .HasForeignKey(x => x.StatusId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Plan>()
+                .HasMany<Policy>(x => x.Policies)
+                .WithOne(x => x.Plan)
+                .HasForeignKey(x => x.PlanId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Plan>()
+                .HasMany<PlanCoverage>(x => x.PlanCoverages)
+                .WithOne(x => x.Plan)
+                .HasForeignKey(x => x.PlanId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Policy>()
+                .HasOne<Status>(x => x.Status)
+                .WithMany(x => x.Policies)
+                .HasForeignKey(x => x.StatusId)
+                .OnDelete(DeleteBehavior.Cascade);
             #endregion
 
             #region Property configurations

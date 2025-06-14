@@ -3,7 +3,7 @@
     public enum Roles
 	{
 		SuperAdmin,
-		Admin,
-		Client
+		Administrator,
+		Analyst
 	}
 }

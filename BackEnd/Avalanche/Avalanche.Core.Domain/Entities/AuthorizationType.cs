@@ -6,10 +6,5 @@ namespace Avalanche.Core.Domain.Entities
     {
         public string Name { get; set; }
         public List<Authorization> Authorizations { get; set; }
-
-        public AuthorizationType()
-        {
-            this.Id = "";
-        }
     }
 }
