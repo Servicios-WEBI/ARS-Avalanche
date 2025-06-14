@@ -5,5 +5,6 @@ namespace Avalanche.Core.Application.Interfaces.Reposirories
 {
     public interface IPlanRepository : IGenericRepository<Plan>
     {
+        Task<Plan> GetByNameAsync(string name);
     }
 }
