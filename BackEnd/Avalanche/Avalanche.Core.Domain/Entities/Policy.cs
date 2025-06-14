@@ -15,8 +15,5 @@ namespace Avalanche.Core.Domain.Entities
         public string PlanId { get; set; }
         public List<AffiliatePolicy> AffiliatePolicies { get; set; }
         public List<Authorization> Authorizations { get; set; }
-        public Policy() {
-            this.Id = "";
-        }
     }
 }

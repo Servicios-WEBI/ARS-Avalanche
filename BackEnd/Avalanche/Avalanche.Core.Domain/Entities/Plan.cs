@@ -9,9 +9,5 @@ namespace Avalanche.Core.Domain.Entities
         public double MonthlyCost { get; set; }
         public List<Policy> Policies { get; set; }
         public List<PlanCoverage> PlanCoverages { get; set; }
-
-        public Plan() {
-            this.Id = "";
-        }
     }
 }

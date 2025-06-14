@@ -17,9 +17,5 @@ namespace Avalanche.Core.Domain.Entities
         public string PolicyId { get; set; }
         public Hospital Hospital { get; set; }
         public string HospitalId { get; set; }
-
-        public Authorization() {
-            this.Id = "";
-        }
     }
 }

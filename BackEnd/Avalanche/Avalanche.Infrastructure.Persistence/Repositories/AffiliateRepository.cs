@@ -1,10 +1,11 @@
-﻿using Avalanche.Core.Domain.Entities;
+﻿using Avalanche.Core.Application.Interfaces.Reposirories;
+using Avalanche.Core.Domain.Entities;
 using Avalanche.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace Avalanche.Infrastructure.Persistence.Repositories
 {
-    public class AffiliateRepository : GenericRepository<Affiliate>
+    public class AffiliateRepository : GenericRepository<Affiliate>, IAffiliateRepository
     {
         private readonly IDbContextFactory<ApplicationContext> _dbContext;
 

@@ -11,10 +11,5 @@ namespace Avalanche.Core.Domain.Entities
         public List<Client> Clients { get; set; }
         public List<Policy> Policies { get; set; }
         public List<Hospital> Hospitals { get; set; }
-
-        public Status()
-        {
-            this.Id = "";
-        }
     }
 }

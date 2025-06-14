@@ -1,4 +1,5 @@
-﻿using Avalanche.Core.Application.Interfaces.Repositories;
+﻿using Avalanche.Core.Application.Interfaces.Reposirories;
+using Avalanche.Core.Application.Interfaces.Repositories;
 using Avalanche.Infrastructure.Persistence.Contexts;
 using Avalanche.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -41,6 +42,19 @@ namespace Avalanche.Infrastructure.Persistence
 
             #region Repositories
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddTransient<IAffiliatePolicyRepository, AffiliatePolicyRepository>();
+            services.AddTransient<IAffiliateRepository, AffiliateRepository>();
+            services.AddTransient<IAuthorizationRepository, AuthorizationRepository>();
+            services.AddTransient<IAuthorizationTypeRepository, AuthorizationTypeRepository>();
+            services.AddTransient<IClientRepository, ClientRepository>();
+            services.AddTransient<ICoverageRepository, CoverageRepository>();
+            services.AddTransient<IDocumentTypeRepository, DocumentTypeRepository>();
+            services.AddTransient<IHospitalRepository, HospitalRepository>();
+            services.AddTransient<IInstitutionTypeRepository, InstitutionTypeRepository>();
+            services.AddTransient<IPlanCoverageRepository, PlanCoverageRepository>();
+            services.AddTransient<IPlanRepository, PlanRepository>();
+            services.AddTransient<IPolicyRepository, PolicyRepository>();
+            services.AddTransient<IStatusRepository, StatusRepository>();
             #endregion
         }
     }
