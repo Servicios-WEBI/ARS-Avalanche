@@ -1,5 +1,4 @@
-﻿using Avalanche.Core.Application.Interfaces.Reposirories;
-using Avalanche.Core.Application.Interfaces.Repositories;
+﻿using Avalanche.Core.Application.Interfaces.Repositories;
 using Avalanche.Infrastructure.Persistence.Contexts;
 using Avalanche.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;

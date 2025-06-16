@@ -1,7 +1,6 @@
-﻿using Avalanche.Core.Application.Interfaces.Repositories;
-using Avalanche.Core.Domain.Entities;
+﻿using Avalanche.Core.Domain.Entities;
 
-namespace Avalanche.Core.Application.Interfaces.Reposirories
+namespace Avalanche.Core.Application.Interfaces.Repositories
 {
     public interface IAuthorizationTypeRepository : IGenericRepository<AuthorizationType>
     {
