@@ -1,6 +1,6 @@
 using AutoMapper;
 using Avalanche.Core.Application;
-using Avalanche.Core.Application.Interfaces.Reposirories;
+using Avalanche.Core.Application.Interfaces.Repositories;
 using Avalanche.Core.Application.Seeds;
 using Avalanche.Infrastructure.Identity;
 using Avalanche.Infrastructure.Persistence;
