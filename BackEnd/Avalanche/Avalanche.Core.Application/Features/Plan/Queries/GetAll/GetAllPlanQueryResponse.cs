@@ -13,7 +13,7 @@ namespace Avalanche.Core.Application.Features.Plan.Queries.GetAll
         [SwaggerSchema(Description = "Identificador único")]
         public string Id { get; set; }
 
-        [SwaggerSchema(Description = "Nombre del cine")]
+        [SwaggerSchema(Description = "Nombre del plan")]
         public string Name { get; set; }
 
         [SwaggerSchema(Description = "Descipción")]

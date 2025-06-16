@@ -47,6 +47,7 @@ builder.Services.AddControllers(options =>
 {
     options.SuppressInferBindingSourcesForParameters = true;
     options.SuppressMapClientErrors = true;
+    options.SuppressModelStateInvalidFilter = true;
 })
 .AddJsonOptions(x =>
 {

@@ -11,12 +11,12 @@ namespace Avalanche.Core.Application.Features.Plan.Queries.GetAll
 
     public class GetAllPlanQueryHandler : IRequestHandler<GetAllPlanQuery, GetAllPlanQueryResponse>
     {
-        private readonly IPlanRepository _cinemaRepository;
+        private readonly IPlanRepository _planRepository;
         private readonly IMapper _mapper;
 
-        public GetAllPlanQueryHandler(IPlanRepository cinemaRepository, IMapper mapper)
+        public GetAllPlanQueryHandler(IPlanRepository planRepository, IMapper mapper)
         {
-            _cinemaRepository = cinemaRepository;
+            _planRepository = planRepository;
             _mapper = mapper;
         }
 
@@ -26,10 +26,10 @@ namespace Avalanche.Core.Application.Features.Plan.Queries.GetAll
             {
                 GetAllPlanQueryResponse result = new();
 
-                var getAlls = await _cinemaRepository.GetAllAsync();
-                var cinemas = _mapper.Map<List<GetAllPlanQueryResponseChild>>(getAlls.OrderByDescending(x => x.Created).ToList());
+                var getAlls = await _planRepository.GetAllAsync();
+                var plans = _mapper.Map<List<GetAllPlanQueryResponseChild>>(getAlls.OrderByDescending(x => x.Created).ToList());
 
-                result.Plans = cinemas;
+                result.Plans = plans;
 
                 return result;
             }
