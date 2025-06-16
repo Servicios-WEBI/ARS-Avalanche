@@ -15,12 +15,12 @@ namespace Avalanche.Interface.BusinessApi.Extensions
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "Avalanche Authentication API",
-                    Description = "This Api will be responsible for authenticate the users in the system",
+                    Title = "Avalanche Business API",
+                    Description = "This Api will be responsible for manage everything in the system",
                     Contact = new OpenApiContact
                     {
-                        Name = "Avalanche Authentication",
-                        Email = "baseapp@gmail.com"
+                        Name = "Avalanche Business",
+                        Email = "arsavalanche@gmail.com"
                     }
                 });
                 options.EnableAnnotations();

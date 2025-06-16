@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Avalanche.Core.Application.Dtos.Plan;
-using Avalanche.Core.Application.Interfaces.Reposirories;
+using Avalanche.Core.Application.Interfaces.Repositories;
 using Avalanche.Core.Domain.Entities;
 using CsvHelper;
 using System.Globalization;
