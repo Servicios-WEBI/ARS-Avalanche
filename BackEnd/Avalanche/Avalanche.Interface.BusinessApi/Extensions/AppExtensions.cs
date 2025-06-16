@@ -9,7 +9,7 @@ namespace Avalanche.Interface.BusinessApi.Extensions
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Avalanche Authentication API");
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Avalanche Business API");
                 options.DefaultModelRendering(ModelRendering.Model);
             });
         }
