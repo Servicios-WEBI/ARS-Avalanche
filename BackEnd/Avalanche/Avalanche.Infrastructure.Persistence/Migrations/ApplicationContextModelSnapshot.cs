@@ -30,9 +30,8 @@ namespace Avalanche.Infrastructure.Persistence.Migrations
                     b.Property<DateOnly>("AffiliateDate")
                         .HasColumnType("date");
 
-                    b.Property<string>("BirthDate")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<DateOnly>("BirthDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("ClientId")
                         .IsRequired()

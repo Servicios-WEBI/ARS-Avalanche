@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Avalanche.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20250614023829_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20250617004236_RedoingMigration")]
+    partial class RedoingMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,9 +33,8 @@ namespace Avalanche.Infrastructure.Persistence.Migrations
                     b.Property<DateOnly>("AffiliateDate")
                         .HasColumnType("date");
 
-                    b.Property<string>("BirthDate")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<DateOnly>("BirthDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("ClientId")
                         .IsRequired()
