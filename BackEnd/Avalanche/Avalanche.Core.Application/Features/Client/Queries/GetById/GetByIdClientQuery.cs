@@ -62,10 +62,11 @@ namespace Avalanche.Core.Application.Features.Client.Queries.GetById
                     });
                 }
 
-                var affiliates = entity.Affiliates.Where(x => (x.ClientId != entity.Id) && (x.StatusId != activo.Id)).Select(a => new ClientAffiliatesResponseDTO
+                var affiliates = entity.Affiliates.Where(x => (x.DocumentNumber != entity.DocumentNumber) && (x.StatusId == activo.Id)).Select(a => new ClientAffiliatesResponseDTO
                 {
                     AffiliateId = a.Id,
                     AffiliateName = a.FirstName + " " + a.LastName,
+                    DocumentType = a.DocumentType.Name,
                     DocumentNumber = a.DocumentNumber
                 }).ToList();
 
