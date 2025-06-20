@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Avalanche.Core.Application.Constants;
 using Avalanche.Core.Application.Dtos.Affiliate;
 using Avalanche.Core.Application.Interfaces.Repositories;
+using Avalanche.Core.Domain.Entities;
 using MediatR;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
@@ -19,13 +21,11 @@ namespace Avalanche.Core.Application.Features.Affiliate.Queries.GetById
     {
         private readonly IAffiliateRepository _affilliateRepository;
         private readonly IPolicyRepository _policyRepository;
-        private readonly IMapper _mapper;
 
-        public GetByIdAffiliateQueryHandler(IAffiliateRepository affilliateRepository, IPolicyRepository policyRepository, IMapper mapper)
+        public GetByIdAffiliateQueryHandler(IAffiliateRepository affilliateRepository, IPolicyRepository policyRepository)
         {
             _affilliateRepository = affilliateRepository;
             _policyRepository = policyRepository;
-            _mapper = mapper;
         }
 
         public async Task<GetByIdAffiliateQueryResponse> Handle(GetByIdAffiliateQuery query, CancellationToken cancellationToken)
@@ -42,17 +42,26 @@ namespace Avalanche.Core.Application.Features.Affiliate.Queries.GetById
                     m => m.AffiliatePolicies
                 });
 
-                var policy = await _policyRepository.GetByIdWithIncludeAsync(t => t.Id == entity.AffiliatePolicies[0].PolicyId, new List<Expression<Func<Domain.Entities.Policy, object>>>
+                if (entity == null)
                 {
-                    m => m.Plan,
-                    m => m.Status
-                });
+                    throw new Exception(ErrorMessages.NotFound);
+                }
+
+                Policy policy = new();
+                if (entity.AffiliatePolicies.Count != 0)
+                {
+                    policy = await _policyRepository.GetByIdWithIncludeAsync(t => t.Id == entity.AffiliatePolicies[0].PolicyId, new List<Expression<Func<Domain.Entities.Policy, object>>>
+                    {
+                        m => m.Plan,
+                        m => m.Status
+                    });
+                }
 
                 AffiliatePolicyResponseDTO affiliatePolicy = new()
                 {
                     PolicyNumber = policy.Number,
-                    PolicyStatus = policy.Status.Name,
-                    PlanName = policy.Plan.Name
+                    PolicyStatus = policy.Status?.Name,
+                    PlanName = policy.Plan?.Name
                 };
 
                 AffiliateResponseDTO affilliate = new()

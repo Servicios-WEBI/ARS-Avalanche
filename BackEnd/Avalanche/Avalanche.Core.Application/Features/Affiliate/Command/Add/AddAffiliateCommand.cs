@@ -5,6 +5,7 @@ using Avalanche.Core.Application.Interfaces.Repositories;
 using MediatR;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 
 namespace Avalanche.Core.Application.Features.Affiliate.Command.Add
 {
@@ -68,12 +69,20 @@ namespace Avalanche.Core.Application.Features.Affiliate.Command.Add
                 {
                     throw new Exception($"No se encontró el tipo de documento: {command.DocumentType}");
                 }
+
+                var affiliate = await _affilliateRepository.GetByDocumentNumberAsync(a => a.DocumentNumber == command.DocumentNumber, new List<Expression<Func<Domain.Entities.Affiliate, object>>>{});
+                if (affiliate != null)
+                {
+                    throw new Exception("Ya existe un afiliado con ese número de documento");
+                }
+
                 var status = await _statusRepository.GetByNameAsync("Activo");
 
                 AffiliateDTO response = new();
                 var valueToAdd = _mapper.Map<Domain.Entities.Affiliate>(command);
                 valueToAdd.DocumentTypeId = documentType.Id;
                 valueToAdd.StatusId = status.Id;
+                valueToAdd.AffiliateDate = DateOnly.FromDateTime(DateTime.UtcNow);
 
                 var entity = await _affilliateRepository.AddAsync(valueToAdd);
 

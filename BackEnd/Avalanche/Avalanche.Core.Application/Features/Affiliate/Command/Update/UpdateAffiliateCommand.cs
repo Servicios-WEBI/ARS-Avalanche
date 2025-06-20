@@ -78,8 +78,16 @@ namespace Avalanche.Core.Application.Features.Affiliate.Command.Update
                 if (valueToUpdate == null)
                     throw new Exception(ErrorMessages.NotFound);
 
-                var documentType = await _documentTypeRepository.GetByNameAsync(command.DocumentType);
+                var documentType = await _documentTypeRepository.GetByNameAsync(command.DocumentType.ToUpper());
+                if (documentType == null)
+                {
+                    throw new Exception($"No se encontró el tipo de documento: {command.DocumentType.ToUpper()}");
+                }
                 var status = await _statusRepository.GetByNameAsync(command.Status);
+                if (documentType == null)
+                {
+                    throw new Exception($"No se encontró el estado: {command.Status}");
+                }
 
                 valueToUpdate.FirstName = command.FirstName;
                 valueToUpdate.MiddleName = command.MiddleName;
@@ -94,6 +102,8 @@ namespace Avalanche.Core.Application.Features.Affiliate.Command.Update
                 await _affilliateRepository.UpdateAsync(valueToUpdate, valueToUpdate.Id);
 
                 response = _mapper.Map<AffiliateDTO>(valueToUpdate);
+                response.DocumentType = command.DocumentType;
+                response.AffiliateStatus = command.Status;
                 response.Status = "Exitoso";
                 response.Details = [new ErrorDetailsDTO { Code = "000", Message = "Se modificó correctamente el afiliado" }];
                 return response;

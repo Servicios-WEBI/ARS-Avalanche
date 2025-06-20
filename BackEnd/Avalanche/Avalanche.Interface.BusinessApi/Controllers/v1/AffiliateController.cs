@@ -77,7 +77,7 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
         }
 
         [Authorize(Roles = "Administrator, Analyst")]
-        [HttpGet("{documentNumber}")]
+        [HttpGet("by-document/{documentNumber}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetByDocumentNumberAffiliateQueryResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDTO))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]

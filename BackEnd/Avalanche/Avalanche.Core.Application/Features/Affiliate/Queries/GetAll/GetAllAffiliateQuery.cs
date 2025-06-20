@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Avalanche.Core.Application.Interfaces.Repositories;
+﻿using Avalanche.Core.Application.Interfaces.Repositories;
 using MediatR;
 using System.Linq.Expressions;
 
@@ -13,12 +12,10 @@ namespace Avalanche.Core.Application.Features.Affiliate.Queries.GetAll
     public class GetAllAffiliateQueryHandler : IRequestHandler<GetAllAffiliateQuery, GetAllAffiliateQueryResponse>
     {
         private readonly IAffiliateRepository _affilliateRepository;
-        private readonly IMapper _mapper;
 
-        public GetAllAffiliateQueryHandler(IAffiliateRepository affilliateRepository, IMapper mapper)
+        public GetAllAffiliateQueryHandler(IAffiliateRepository affilliateRepository)
         {
             _affilliateRepository = affilliateRepository;
-            _mapper = mapper;
         }
 
         public async Task<GetAllAffiliateQueryResponse> Handle(GetAllAffiliateQuery query, CancellationToken cancellationToken)
