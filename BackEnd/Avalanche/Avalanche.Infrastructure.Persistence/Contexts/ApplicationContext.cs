@@ -251,6 +251,11 @@ namespace Avalanche.Infrastructure.Persistence.Contexts
             #endregion
 
             #region Property configurations
+            modelBuilder.Entity<Affiliate>().HasIndex(x => x.DocumentNumber).IsUnique();
+
+            modelBuilder.Entity<Client>().HasIndex(x => x.DocumentNumber).IsUnique();
+
+            modelBuilder.Entity<Policy>().HasIndex(x => x.Number).IsUnique();
             #endregion
         }
 

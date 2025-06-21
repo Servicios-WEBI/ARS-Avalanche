@@ -1,5 +1,6 @@
 using AutoMapper;
 using Avalanche.Core.Application;
+using Avalanche.Core.Application.Helpers;
 using Avalanche.Core.Application.Interfaces.Repositories;
 using Avalanche.Core.Application.Seeds;
 using Avalanche.Infrastructure.Identity;
@@ -7,6 +8,7 @@ using Avalanche.Infrastructure.Persistence;
 using Avalanche.Infrastructure.Shared;
 using Avalanche.Interface.BusinessApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,6 +53,7 @@ builder.Services.AddControllers(options =>
 })
 .AddJsonOptions(x =>
 {
+    x.JsonSerializerOptions.Converters.Add(new NullableDateOnlyJsonConverter());
     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });

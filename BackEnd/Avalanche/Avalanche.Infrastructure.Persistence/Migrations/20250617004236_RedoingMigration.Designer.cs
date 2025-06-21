@@ -3,6 +3,7 @@ using System;
 using Avalanche.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Avalanche.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20250617004236_RedoingMigration")]
+    partial class RedoingMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,9 +83,6 @@ namespace Avalanche.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
-
-                    b.HasIndex("DocumentNumber")
-                        .IsUnique();
 
                     b.HasIndex("DocumentTypeId");
 
@@ -286,9 +286,6 @@ namespace Avalanche.Infrastructure.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DocumentNumber")
-                        .IsUnique();
 
                     b.HasIndex("DocumentTypeId");
 
@@ -513,7 +510,7 @@ namespace Avalanche.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateOnly?>("EffectiveEndDate")
+                    b.Property<DateOnly>("EffectiveEndDate")
                         .HasColumnType("date");
 
                     b.Property<DateOnly>("EffectiveStartDate")
@@ -540,9 +537,6 @@ namespace Avalanche.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
-
-                    b.HasIndex("Number")
-                        .IsUnique();
 
                     b.HasIndex("PlanId");
 

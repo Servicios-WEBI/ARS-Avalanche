@@ -15,8 +15,8 @@ namespace Avalanche.Core.Application.Seeds
                 {
                     var documentTypes = new List<string>
                     {
-                        "Cedula",
-                        "Pasaporte",
+                        "CEDULA",
+                        "PASAPORTE",
                         "RNC"
                     };
 

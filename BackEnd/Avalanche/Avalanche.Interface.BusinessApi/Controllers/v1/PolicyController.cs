@@ -1,41 +1,42 @@
 ﻿using Avalanche.Core.Application.Constants;
 using Avalanche.Core.Application.Dtos.Common;
-using Avalanche.Core.Application.Dtos.Coverage;
-using Avalanche.Core.Application.Features.Coverage.Command.Add;
-using Avalanche.Core.Application.Features.Coverage.Command.Delete;
-using Avalanche.Core.Application.Features.Coverage.Command.Update;
-using Avalanche.Core.Application.Features.Coverage.Queries.GetAll;
+using Avalanche.Core.Application.Dtos.Policy;
+using Avalanche.Core.Application.Features.Policy.Command.Add;
+using Avalanche.Core.Application.Features.Policy.Command.Delete;
+using Avalanche.Core.Application.Features.Policy.Command.Update;
+using Avalanche.Core.Application.Features.Policy.Queries.GetAll;
 using Avalanche.Core.Application.Helpers;
 using Avalanche.Interface.BusinessAPI.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using Avalanche.Core.Application.Features.Policy.Queries.GetById;
 
 namespace Avalanche.Interface.BusinessApi.Controllers.v1
 {
-    [Route("api/v1/coverage")]
-    [SwaggerTag("Manejo de planes")]
-    public class CoverageController : BaseApiController
+    [Route("api/v1/policy")]
+    [SwaggerTag("Manejo de polizas")]
+    public class PolicyController : BaseApiController
     {
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator, Analyst")]
         [HttpGet()]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetAllCoverageQueryResponse))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetAllPolicyQueryResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDTO))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDTO))]
         [SwaggerOperation(
-           Summary = "Obtener todas las coberturas",
-           Description = "Nos permite obtener todas las coberturas disponibles en el sistema"
+           Summary = "Obtener todas las polizas",
+           Description = "Nos permite obtener todas las polizas disponibles en el sistema"
         )]
-        public async Task<IActionResult> GetCoverages()
+        public async Task<IActionResult> GetPolicies()
         {
             try
             {
-                var result = await Mediator.Send(new GetAllCoverageQuery());
+                var result = await Mediator.Send(new GetAllPolicyQuery());
 
-                if (result.Coverages.Count == 0)
+                if (result.Policies.Count == 0)
                 {
-                    return NotFound(ErrorMapperHelper.Error(ErrorMessages.NotFound, "No existen coberturas en el sistema"));
+                    return NotFound(ErrorMapperHelper.Error(ErrorMessages.NotFound, "No existen polizas en el sistema"));
                 }
                 return Ok(result);
             }
@@ -46,17 +47,45 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
 
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator, Analyst")]
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetByIdPolicyQueryResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDTO))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDTO))]
+        [SwaggerOperation(
+            Summary = "Obtener detalles de poliza",
+            Description = "Nos permite obtener todos los detalles de la poliza"
+         )]
+        public async Task<IActionResult> GetPolicy([FromRoute] string id)
+        {
+            try
+            {
+                var result = await Mediator.Send(new GetByIdPolicyQuery() { Id = id });
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                if (e.Message == ErrorMessages.NotFound)
+                    return NotFound(ErrorMapperHelper.Error(ErrorMessages.NotFound, "No existe una poliza con ese identificador único"));
+
+                return StatusCode(StatusCodes.Status500InternalServerError, ErrorMapperHelper.Error(ErrorMessages.InternalServer, e.Message));
+            }
+
+        }
+        
+        [Authorize(Roles = "Administrator, Analyst")]
         [HttpPost()]
         [SwaggerOperation(
-           Summary = "Crear una cobertura",
-           Description = "Nos permite crear una cobertura"
+           Summary = "Crear una poliza",
+           Description = "Nos permite crear una poliza"
         )]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CoverageDTO))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PolicyDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorDTO))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDTO))]
-        public async Task<IActionResult> PostCoverages([FromBody] AddCoverageCommand command)
+        public async Task<IActionResult> PostPolicy([FromBody] AddPolicyCommand command)
         {
             try
             {
@@ -84,17 +113,17 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
             }
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator, Analyst")]
         [HttpPut()]
         [SwaggerOperation(
-           Summary = "Editar una cobertura",
-           Description = "Nos permite editar una cobertura"
+           Summary = "Editar una poliza",
+           Description = "Nos permite editar una poliza"
         )]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CoverageDTO))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PolicyDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorDTO))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDTO))]
-        public async Task<IActionResult> PutCoverages([FromBody] UpdateCoverageCommand command)
+        public async Task<IActionResult> PutPolicy([FromBody] UpdatePolicyCommand command)
         {
             try
             {
@@ -119,7 +148,7 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
             catch (Exception e)
             {
                 if (e.Message == ErrorMessages.NotFound)
-                    return NotFound(ErrorMapperHelper.Error(ErrorMessages.NotFound, "No existe una cobertura con ese identificador único"));
+                    return NotFound(ErrorMapperHelper.Error(ErrorMessages.NotFound, "No existe una poliza con ese identificador único"));
 
                 return StatusCode(StatusCodes.Status500InternalServerError, ErrorMapperHelper.Error(ErrorMessages.InternalServer, e.Message));
             }
@@ -128,18 +157,18 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
         [Authorize(Roles = "Administrator")]
         [HttpDelete("{id}")]
         [SwaggerOperation(
-           Summary = "Eliminar una cobertura",
-           Description = "Nos permite eliminar una cobertura"
+           Summary = "Eliminar una poliza",
+           Description = "Nos permite eliminar una poliza"
         )]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CoverageDTO))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PolicyDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorDTO))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDTO))]
-        public async Task<IActionResult> DeleteCoverages([FromRoute] string id)
+        public async Task<IActionResult> DeletePolicy([FromRoute] string id)
         {
             try
             {
-                DeleteCoverageCommand command = new() { Id = id };
+                DeletePolicyCommand command = new() { Id = id };
 
                 if (!ModelState.IsValid)
                 {
@@ -157,7 +186,7 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
             catch (Exception e)
             {
                 if (e.Message == ErrorMessages.NotFound)
-                    return NotFound(ErrorMapperHelper.Error(ErrorMessages.NotFound, "No existe una cobertura con ese identificador único"));
+                    return NotFound(ErrorMapperHelper.Error(ErrorMessages.NotFound, "No existe una poliza con ese identificador único"));
 
                 return StatusCode(StatusCodes.Status500InternalServerError, ErrorMapperHelper.Error(ErrorMessages.InternalServer, e.Message));
             }
