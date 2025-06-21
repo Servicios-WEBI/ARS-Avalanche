@@ -13,7 +13,8 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Avalanche.Interface.BusinessApi.Controllers.v1
 {
-    [Route("plan")]
+    [Route("api/v1/plan")]
+    [SwaggerTag("Manejo de planes")]
     public class PlanController : BaseApiController
     {
         [Authorize(Roles = "Administrator")]

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Avalanche.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class RedoingMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -219,7 +219,7 @@ namespace Avalanche.Infrastructure.Persistence.Migrations
                     LastName = table.Column<string>(type: "text", nullable: false),
                     DocumentTypeId = table.Column<string>(type: "text", nullable: false),
                     DocumentNumber = table.Column<string>(type: "text", nullable: false),
-                    BirthDate = table.Column<string>(type: "text", nullable: false),
+                    BirthDate = table.Column<DateOnly>(type: "date", nullable: false),
                     Gender = table.Column<string>(type: "text", nullable: false),
                     AffiliateDate = table.Column<DateOnly>(type: "date", nullable: false),
                     StatusId = table.Column<string>(type: "text", nullable: false),
