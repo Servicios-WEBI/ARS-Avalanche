@@ -1,4 +1,5 @@
-﻿using Swashbuckle.AspNetCore.Annotations;
+﻿using Avalanche.Core.Application.Dtos.Common;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Avalanche.Core.Application.Dtos.Client
 {
@@ -47,6 +48,6 @@ namespace Avalanche.Core.Application.Dtos.Client
         public string PolicyPlan { get; set; }
 
         [SwaggerSchema(Description = "Afiliados del cliente")]
-        public List<ClientAffiliatesResponseDTO> Affiliates { get; set; }
+        public List<AffiliatesResponseDTO> Affiliates { get; set; }
     }
 }

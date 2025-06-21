@@ -1,9 +1,7 @@
-﻿using AutoMapper;
-using Avalanche.Core.Application.Constants;
+﻿using Avalanche.Core.Application.Constants;
 using Avalanche.Core.Application.Dtos.Client;
-using Avalanche.Core.Application.Features.Client.Queries.GetByDocumentNumber;
+using Avalanche.Core.Application.Dtos.Common;
 using Avalanche.Core.Application.Interfaces.Repositories;
-using Avalanche.Core.Domain.Entities;
 using MediatR;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
@@ -52,7 +50,7 @@ namespace Avalanche.Core.Application.Features.Client.Queries.GetByDocumentNumber
 
                 var activo = await _statusRepository.GetByNameAsync("Activo");
 
-                Policy policy = new();
+                Domain.Entities.Policy policy = new();
                 if(entity.Policies.Count != 0)
                 {
                     policy = await _policyRepository.GetByIdWithIncludeAsync(t => t.Id == entity.Policies[0].Id, new List<Expression<Func<Domain.Entities.Policy, object>>>
@@ -62,7 +60,7 @@ namespace Avalanche.Core.Application.Features.Client.Queries.GetByDocumentNumber
                     });
                 }
                 
-                var affiliates = entity.Affiliates.Where(x => (x.DocumentNumber != entity.DocumentNumber) && (x.StatusId == activo.Id)).Select(a => new ClientAffiliatesResponseDTO
+                var affiliates = entity.Affiliates.Where(x => (x.DocumentNumber != entity.DocumentNumber) && (x.StatusId == activo.Id)).Select(a => new AffiliatesResponseDTO
                 {
                     AffiliateId = a.Id,
                     AffiliateName = a.FirstName + " " + a.LastName,

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Avalanche.Core.Application.Interfaces.Repositories;
+﻿using Avalanche.Core.Application.Interfaces.Repositories;
 using MediatR;
 using System.Linq.Expressions;
 

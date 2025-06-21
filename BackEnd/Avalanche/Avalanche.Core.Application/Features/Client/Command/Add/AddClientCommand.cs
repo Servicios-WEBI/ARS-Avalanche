@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
-using Avalanche.Core.Application.Dtos.Common;
 using Avalanche.Core.Application.Dtos.Client;
+using Avalanche.Core.Application.Dtos.Common;
 using Avalanche.Core.Application.Interfaces.Repositories;
 using MediatR;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
-using Avalanche.Core.Domain.Entities;
 using System.Linq.Expressions;
 
 namespace Avalanche.Core.Application.Features.Client.Command.Add

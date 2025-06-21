@@ -1,6 +1,6 @@
-﻿namespace Avalanche.Core.Application.Dtos.Client
+﻿namespace Avalanche.Core.Application.Dtos.Common
 {
-    public class ClientAffiliatesResponseDTO
+    public class AffiliatesResponseDTO
     {
         public string AffiliateId { get; set; }
         public string AffiliateName { get; set; }
