@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Avalanche.Core.Application.Features.Policy.Queries.GetById;
+using Avalanche.Core.Application.Features.Policy.Queries.GetCoveragesById;
 
 namespace Avalanche.Interface.BusinessApi.Controllers.v1
 {
@@ -74,7 +75,35 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
             }
 
         }
-        
+
+        [Authorize(Roles = "Administrator, Analyst")]
+        [HttpGet("{id}/coverages")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetByIdPolicyQueryResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDTO))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDTO))]
+        [SwaggerOperation(
+            Summary = "Obtener coberturas de poliza",
+            Description = "Nos permite obtener todas las coberturas de la poliza"
+         )]
+        public async Task<IActionResult> GetCoveragesPolicy([FromRoute] string id)
+        {
+            try
+            {
+                var result = await Mediator.Send(new GetCoveragesByIdPolicyQuery() { Id = id });
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                if (e.Message == ErrorMessages.NotFound)
+                    return NotFound(ErrorMapperHelper.Error(ErrorMessages.NotFound, "No existe una poliza con ese identificador único"));
+
+                return StatusCode(StatusCodes.Status500InternalServerError, ErrorMapperHelper.Error(ErrorMessages.InternalServer, e.Message));
+            }
+
+        }
+
         [Authorize(Roles = "Administrator, Analyst")]
         [HttpPost()]
         [SwaggerOperation(
