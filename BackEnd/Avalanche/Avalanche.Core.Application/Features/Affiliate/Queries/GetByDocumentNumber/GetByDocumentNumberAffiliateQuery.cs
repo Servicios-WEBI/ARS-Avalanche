@@ -74,6 +74,7 @@ namespace Avalanche.Core.Application.Features.Affiliate.Queries.GetByDocumentNum
                     AffiliateDate = entity.AffiliateDate,
                     Gender = entity.Gender,
                     Status = entity.Status.Name,
+                    IsPrincipal = entity.AffiliatePolicies.Count != 0 ? entity.AffiliatePolicies[0].IsPrincipal : null,
                     ClientId = entity.ClientId,
                     ClientName = entity.Client.FirstName + " " + entity.Client.LastName,
                     Policy = affiliatePolicy

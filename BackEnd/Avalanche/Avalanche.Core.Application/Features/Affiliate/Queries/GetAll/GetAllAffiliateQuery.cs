@@ -28,7 +28,8 @@ namespace Avalanche.Core.Application.Features.Affiliate.Queries.GetAll
                 {
                     m => m.DocumentType,
                     m => m.Status,
-                    m => m.Client
+                    m => m.Client,
+                    m => m.AffiliatePolicies
                 });
                 var entities = getAlls.OrderByDescending(x => x.Created).ToList();
 
@@ -44,6 +45,7 @@ namespace Avalanche.Core.Application.Features.Affiliate.Queries.GetAll
                     AffiliateDate = a.AffiliateDate,
                     Gender = a.Gender,
                     Status = a.Status.Name,
+                    IsPrincipal = a.AffiliatePolicies.Count != 0 ? a.AffiliatePolicies[0].IsPrincipal : null,
                     ClientId = a.ClientId,
                     ClientName = a.Client.FirstName + " " + a.Client.LastName
                 }).ToList();

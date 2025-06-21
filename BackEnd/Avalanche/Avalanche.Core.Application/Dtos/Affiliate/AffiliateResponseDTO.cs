@@ -34,6 +34,9 @@ namespace Avalanche.Core.Application.Dtos.Affiliate
         [SwaggerSchema(Description = "Estado")]
         public string Status { get; set; }
 
+        [SwaggerSchema(Description = "Es principal")]
+        public bool? IsPrincipal { get; set; }
+
         [SwaggerSchema(Description = "Identificador único del cliente")]
         public string ClientId { get; set; }
 

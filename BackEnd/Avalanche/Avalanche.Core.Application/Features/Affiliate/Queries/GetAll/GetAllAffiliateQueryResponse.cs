@@ -39,7 +39,10 @@ namespace Avalanche.Core.Application.Features.Affiliate.Queries.GetAll
 
         [SwaggerSchema(Description = "Estado")]
         public string Status { get; set; }
-        
+
+        [SwaggerSchema(Description = "Es principal")]
+        public bool? IsPrincipal { get; set; }
+
         [SwaggerSchema(Description = "Identificador único del cliente")]
         public string ClientId { get; set; }
 
