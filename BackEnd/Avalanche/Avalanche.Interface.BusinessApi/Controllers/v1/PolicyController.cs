@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Avalanche.Core.Application.Features.Policy.Queries.GetById;
 using Avalanche.Core.Application.Features.Policy.Queries.GetCoveragesById;
+using Avalanche.Core.Application.Features.Policy.Queries.GetByNumber;
 
 namespace Avalanche.Interface.BusinessApi.Controllers.v1
 {
@@ -70,6 +71,34 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
             {
                 if (e.Message == ErrorMessages.NotFound)
                     return NotFound(ErrorMapperHelper.Error(ErrorMessages.NotFound, "No existe una poliza con ese identificador único"));
+
+                return StatusCode(StatusCodes.Status500InternalServerError, ErrorMapperHelper.Error(ErrorMessages.InternalServer, e.Message));
+            }
+
+        }
+
+        [Authorize(Roles = "Administrator, Analyst")]
+        [HttpGet("by-number/{number}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetByNumberPolicyQueryResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDTO))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDTO))]
+        [SwaggerOperation(
+            Summary = "Obtener detalles de poliza",
+            Description = "Nos permite obtener todos los detalles de la poliza"
+         )]
+        public async Task<IActionResult> GetByNumberPolicy([FromRoute] string number)
+        {
+            try
+            {
+                var result = await Mediator.Send(new GetByNumberPolicyQuery() { Number = number });
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                if (e.Message == ErrorMessages.NotFound)
+                    return NotFound(ErrorMapperHelper.Error(ErrorMessages.NotFound, "No existe una poliza con ese número"));
 
                 return StatusCode(StatusCodes.Status500InternalServerError, ErrorMapperHelper.Error(ErrorMessages.InternalServer, e.Message));
             }
