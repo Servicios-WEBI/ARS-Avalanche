@@ -91,7 +91,7 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseCors("AllowSpecificDomain");
+app.UseCors("AllowAllDomain");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSwaggerExtension();
@@ -134,7 +134,7 @@ if (builder.Configuration.GetValue<bool>("InitialRun"))
 
             #endregion
 
-            logger.LogInformation("La carga inicial se completó satisfactoriamente");
+            logger.LogInformation("La carga inicial se completÃ³ satisfactoriamente");
         }
         catch (Exception ex)
         {
