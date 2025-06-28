@@ -15,25 +15,25 @@ namespace Avalanche.Core.Application.Seeds
                 {
                     var coverages = new List<string>
                     {
-                        "Consulta General",
-                        "Consulta Especializada",
-                        "Medicamentos",
-                        "Examenes de Laboratorio",
-                        "Estudios de Imagenes",
-                        "Hospitalizacion",
-                        "Procedimientos Quirurgicos",
-                        "Terapias de Rehabilitacion",
-                        "Atencion de Urgencias",
-                        "Maternidad",
-                        "Atencion Odontologica",
-                        "Atencion Preventiva",
-                        "Vacunacion",
-                        "Enfermeria a Domicilio",
-                        "Transporte Medico",
-                        "Cuidados Paliativos",
-                        "Rehabilitacion Postoperatoria",
-                        "Atencion Psicologica",
-                        "Terapias Alternativas"
+                        "CONSULTA GENERAL",
+                        "CONSULTA ESPECIALIZADA",
+                        "MEDICAMENTOS",
+                        "EXAMENES DE LABORATORIO",
+                        "ESTUDIOS DE IMAGENES",
+                        "HOSPITALIZACION",
+                        "PROCEDIMIENTOS QUIRURGICOS",
+                        "TERAPIAS DE REHABILITACION",
+                        "ATENCION DE URGENCIAS",
+                        "MATERNIDAD",
+                        "ATENCION ODONTOLOGICA",
+                        "ATENCION PREVENTIVA",
+                        "VACUNACION",
+                        "ENFERMERIA A DOMICILIO",
+                        "TRANSPORTE MEDICO",
+                        "CUIDADOS PALIATIVOS",
+                        "REHABILITACION POSTOPERATORIA",
+                        "ATENCION PSICOLOGICA",
+                        "TERAPIAS ALTERNATIVAS"
                     };
 
                     foreach (var item in coverages)
