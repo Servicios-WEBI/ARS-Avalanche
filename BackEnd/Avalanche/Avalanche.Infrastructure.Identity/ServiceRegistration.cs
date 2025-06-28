@@ -84,7 +84,7 @@ namespace Avalanche.Infrastructure.Identity
                 options.Key = refreshSettings.Key;
                 options.Issuer = refreshSettings.Issuer;
                 options.Audience = refreshSettings.Audience;
-                options.DurationInHours = refreshSettings.DurationInHours;
+                options.DurationInMinutes = refreshSettings.DurationInMinutes;
             });
 
             services.AddAuthentication(options =>

@@ -1,4 +1,6 @@
-﻿using Avalanche.Core.Application.Dtos.Account;
+﻿using Avalanche.Core.Application.Constants;
+using Avalanche.Core.Application.Dtos.Account;
+using Avalanche.Core.Application.Dtos.Common;
 using Avalanche.Core.Application.Dtos.Email;
 using Avalanche.Core.Application.Enums;
 using Avalanche.Core.Application.Helpers;
@@ -78,8 +80,10 @@ namespace Avalanche.Infrastructure.Identity.Services
 
                 response.JWToken = await GenerateJWToken(user.Id);
                 response.ExpiresIn = (_jwtSettings.DurationInMinutes * 60).ToString();
+                response.ExpiresAt = DateTime.Now.AddMinutes(_jwtSettings.DurationInMinutes);
                 response.RefreshToken = GenerateRefreshToken(user.Id);
-                response.RefreshExpiresIn = (_refreshSettings.DurationInHours * 3600).ToString();
+                response.RefreshExpiresIn = (_refreshSettings.DurationInMinutes * 60).ToString();
+                response.RefreshExpiresAt = DateTime.Now.AddMinutes(_refreshSettings.DurationInMinutes);
 
                 _logger.LogInformation("Inicio de sesión finalizado correctamente");
                 return response;
@@ -96,11 +100,12 @@ namespace Avalanche.Infrastructure.Identity.Services
         public async Task<RegisterResponse> RegisterUserAsync(RegisterRequest request)
         {
             RegisterResponse response = await ValidateUserBeforeRegistrationAsync(request);
-            if (response.HasError)
+            if (response.Status == "Fallido")
             {
                 return response;
             }
 
+            response.Details = new();
             var user = new ApplicationUser
             {
                 Email = request.Email,
@@ -128,14 +133,20 @@ namespace Avalanche.Infrastructure.Identity.Services
                 }
                 else
                 {
+                    response.Status = "Fallido";
                     foreach (var error in result.Errors)
                     {
-                        response.Error += $"Error: {error.Description}";
+                        ErrorDetailsDTO errorDTO = new()
+                        {
+                            Code = ErrorMessages.BadRequest,
+                            Message = error.Description
+                        };
+                        response.Details.Add(errorDTO);
                     }
-                    response.HasError = true;
                     return response;
                 }
-                response.IsSuccess = true;
+                response.Status = "Exitoso";
+                response.Details = [new ErrorDetailsDTO { Code = "000", Message = "Se insertó correctamente el usuario" }];
 
                 _logger.LogInformation("Registro de usuario finalizado correctamente");
                 return response;
@@ -143,9 +154,70 @@ namespace Avalanche.Infrastructure.Identity.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Un error ocurrió tratando de crear el usuario");
-                response.HasError = true;
-                response.Error = ex.Message;
+                throw;
+            }
+        }
+
+        public async Task<RegisterResponse> RegisterAnalystAsync(RegisterRequest request)
+        {
+            RegisterResponse response = await ValidateUserBeforeRegistrationAsync(request);
+            
+            if (response.Status == "Fallido")
+            {
                 return response;
+            }
+
+            response.Details = new();
+            var user = new ApplicationUser
+            {
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                UserName = request.UserName,
+                PhoneNumber = request.PhoneNumber,
+                UrlImage = request.UrlImage,
+                Address = request.Address,
+                EmailConfirmed = true,
+                PhoneNumberConfirmed = true
+            };
+
+            try
+            {
+                var result = await _userManager.CreateAsync(user, request.Password);
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, Roles.Analyst.ToString());
+                    await _emailService.SendAsync(new EmailRequest()
+                    {
+                        To = user.Email,
+                        Body = EmailHelper.MakeEmailForConfirmed(user.FirstName + " " + user.LastName),
+                        Subject = "Registro de analista"
+                    });
+                }
+                else
+                {
+                    response.Status = "Fallido";
+                    foreach (var error in result.Errors)
+                    {
+                        ErrorDetailsDTO errorDTO = new()
+                        {
+                            Code = ErrorMessages.BadRequest,
+                            Message = error.Description
+                        };
+                        response.Details.Add(errorDTO);
+                    }
+                    return response;
+                }
+                response.Status = "Exitoso";
+                response.Details = [new ErrorDetailsDTO { Code = "000", Message = "Se insertó correctamente el analista" }];
+
+                _logger.LogInformation("Registro de analista finalizado correctamente");
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Un error ocurrió tratando de crear el analista");
+                throw;
             }
         }
 
@@ -393,7 +465,7 @@ namespace Avalanche.Infrastructure.Identity.Services
                 issuer: _refreshSettings.Issuer,
                 audience: _refreshSettings.Audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(_refreshSettings.DurationInHours),
+                expires: DateTime.UtcNow.AddMinutes(_refreshSettings.DurationInMinutes),
                 signingCredentials: signingCredetials);
 
             string token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
@@ -488,25 +560,18 @@ namespace Avalanche.Infrastructure.Identity.Services
             }
             catch (Exception ex)
             {
-                return new RegisterResponse()
-                {
-                    HasError = true,
-                    Error = ex.Message
-                };
+                throw;
             }
 
-
-            response.IsSuccess = true;
+            response.Status = "Exitoso";
+            response.Details = [new ErrorDetailsDTO { Code = "000", Message = "Se editó correctamente el perfil" }];
             return response;
         }
 
         #region Private Methods
         private async Task<RegisterResponse> ValidateUserBeforeRegistrationAsync(RegisterRequest request)
         {
-            RegisterResponse response = new()
-            {
-                HasError = false
-            };
+            RegisterResponse response = new();
 
             try
             {
@@ -515,16 +580,19 @@ namespace Avalanche.Infrastructure.Identity.Services
                 var userWithSameUserName = await _userManager.FindByNameAsync(request.UserName);
                 if (userWithSameUserName != null)
                 {
-                    response.HasError = true;
-                    response.Error = $"El nombre de usuario '{request.UserName}' ya está siendo usado.";
+                    var error = ErrorMapperHelper.Error(ErrorMessages.BadRequest, $"El nombre de usuario '{request.UserName}' ya está siendo usado.");
+                    response.Status = error.Status;
+                    response.Details = error.Details;
                     return response;
                 }
 
                 var userWithSameEmail = await _userManager.FindByEmailAsync(request.Email);
                 if (userWithSameEmail != null)
                 {
-                    response.HasError = true;
-                    response.Error = $"El correo '{request.Email}' ya está siendo usado.";
+                    
+                    var error = ErrorMapperHelper.Error(ErrorMessages.BadRequest, $"El correo '{request.Email}' ya está siendo usado.");
+                    response.Status = error.Status;
+                    response.Details = error.Details;
                     return response;
                 }
 
@@ -533,9 +601,7 @@ namespace Avalanche.Infrastructure.Identity.Services
             catch (Exception ex) 
             {
                 _logger.LogError(ex, "Un error ocurrió tratando de validar al usuario");
-                response.HasError = true;
-                response.Error = ex.Message;
-                return response;
+                throw;
             }
             
         }

@@ -28,6 +28,7 @@ namespace Avalanche.Core.Application.Features.Account.Queries.GetRefreshAccessTo
 			if(result.Contains("Error") || result == "")
 			{
 				response.HasError = true;
+				response.Error = "No hay refresh token disponible";
 				return response;
 			}
 

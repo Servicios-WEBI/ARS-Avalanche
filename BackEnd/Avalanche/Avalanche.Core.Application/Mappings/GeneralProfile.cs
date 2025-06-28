@@ -6,6 +6,7 @@ using Avalanche.Core.Application.Dtos.Coverage;
 using Avalanche.Core.Application.Dtos.Plan;
 using Avalanche.Core.Application.Dtos.Policy;
 using Avalanche.Core.Application.Features.Account.Commands.Authenticate;
+using Avalanche.Core.Application.Features.Account.Commands.RegisterAnalyst;
 using Avalanche.Core.Application.Features.Account.Commands.RegisterUser;
 using Avalanche.Core.Application.Features.Affiliate.Command.Add;
 using Avalanche.Core.Application.Features.Client.Command.Add;
@@ -28,6 +29,10 @@ namespace Avalanche.Core.Application.Mappings
 
             CreateMap<RegisterRequest, RegisterUserCommand>()
                 .ReverseMap();
+
+            CreateMap<RegisterRequest, RegisterAnalystCommand>()
+                .ReverseMap()
+                .ForMember(x => x.Password, opt => opt.Ignore());
             #endregion
 
             #region Affiliate
