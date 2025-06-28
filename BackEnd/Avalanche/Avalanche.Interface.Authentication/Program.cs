@@ -86,7 +86,7 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseCors("AllowSpecificDomain");
+app.UseCors("AllowAllDomain");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSwaggerExtension();
