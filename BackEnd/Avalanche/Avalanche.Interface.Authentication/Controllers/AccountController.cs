@@ -5,6 +5,7 @@ using Avalanche.Core.Application.Features.Account.Commands.Authenticate;
 using Avalanche.Core.Application.Features.Account.Commands.ChangePassword;
 using Avalanche.Core.Application.Features.Account.Commands.ConfirmCode;
 using Avalanche.Core.Application.Features.Account.Commands.ConfirmEmail;
+using Avalanche.Core.Application.Features.Account.Commands.RegisterAnalyst;
 using Avalanche.Core.Application.Features.Account.Commands.RegisterUser;
 using Avalanche.Core.Application.Features.Account.Commands.ResetPassword;
 using Avalanche.Core.Application.Features.Account.Queries.GetRefreshAccessToken;
@@ -173,13 +174,46 @@ namespace Avalanche.Interface.Authentication.Controllers
                     return BadRequest(ErrorMapperHelper.ListError(errors));
                 }
 
-                if (response.HasError)
+                if (response.Status == "Fallido")
                 {
-                    if (response.Error.Contains("Error") && !response.Error.Contains("password"))
-                    {
-                        return StatusCode(StatusCodes.Status500InternalServerError, ErrorMapperHelper.Error(ErrorMessages.InternalServer, response.Error));
-                    }
-                    return BadRequest(ErrorMapperHelper.Error(ErrorMessages.BadRequest, response.Error));
+                    return BadRequest(response);
+                }
+
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ErrorMapperHelper.Error(ErrorMessages.InternalServer, e.Message));
+            }
+        }
+
+        [HttpPost("registerAnalyst")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RegisterResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(RegisterResponse))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(RegisterResponse))]
+        [SwaggerOperation(
+           Summary = "Registro de analista",
+           Description = "Registrese para usar el sistema"
+        )]
+        public async Task<IActionResult> RegisterAnalyst([FromForm] RegisterAnalystCommand command)
+        {
+            try
+            {
+                var response = await Mediator.Send(command);
+
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+
+                    return BadRequest(ErrorMapperHelper.ListError(errors));
+                }
+
+                if (response.Status == "Fallido")
+                {
+                    return BadRequest(response);
                 }
 
                 return Ok(response);

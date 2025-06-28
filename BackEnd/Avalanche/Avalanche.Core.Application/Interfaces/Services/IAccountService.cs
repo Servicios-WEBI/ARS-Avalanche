@@ -6,6 +6,7 @@ namespace Avalanche.Core.Application.Interfaces.Services
 	{
 		Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request);
 		Task<RegisterResponse> RegisterUserAsync(RegisterRequest request);
+		Task<RegisterResponse> RegisterAnalystAsync(RegisterRequest request);
         Task<ConfirmEmailResponse> ConfirmEmailAsync(string userId, string token);
 		Task<ResetPasswordResponse> ResetPasswordAsync(string email);
 		ConfirmCodeResponse ConfirmCode(string code);
