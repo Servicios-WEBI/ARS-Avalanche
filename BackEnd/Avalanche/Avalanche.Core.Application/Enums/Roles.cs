@@ -4,6 +4,7 @@
 	{
 		SuperAdmin,
 		Administrator,
-		Analyst
+		Analyst,
+		Guest
 	}
 }
