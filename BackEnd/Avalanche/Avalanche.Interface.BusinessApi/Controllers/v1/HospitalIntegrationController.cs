@@ -1,0 +1,61 @@
+﻿using Avalanche.Core.Application.Constants;
+using Avalanche.Core.Application.Dtos.Common;
+using Avalanche.Core.Application.Features.HospitalIntegration.Queries.ValidateAffiliate;
+using Avalanche.Core.Application.Helpers;
+using Avalanche.Interface.BusinessAPI.Controllers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+
+namespace Avalanche.Interface.BusinessApi.Controllers.v1
+{
+    [Route("api/v1/hospitales/integracion")]
+    [SwaggerTag("Interoperabilidad para hospitales")]
+    public class HospitalIntegrationController : BaseApiController
+    {
+        [Authorize(Roles = "Guest")]
+        [HttpGet("validateAffiliate")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ValidateAffiliateQueryResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ValidateAffiliateQueryResponse))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDTO))]
+        [SwaggerOperation(
+           Summary = "Validar afiliado",
+           Description = "Permite a los hospitales validar los clientes"
+        )]
+        public async Task<IActionResult> ValidateAffiliate([FromQuery] ValidateAffiliateQuery query)
+        {
+            try
+            {
+                if (query == null)
+                {
+                    return BadRequest(ErrorMapperHelper.Error(ErrorMessages.BadRequest, "El cuerpo de la solicitud no puede estar vacío o tiene errores de formato."));
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList<string>();
+
+                    return BadRequest(ErrorMapperHelper.ListError(errors));
+                }
+
+                var result = await Mediator.Send(query);
+
+                if (!result.Exists)
+                {
+                    
+                    return NotFound(result);
+                }
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ErrorMapperHelper.Error(ErrorMessages.InternalServer, e.Message));
+            }
+        }        
+    }
+}
