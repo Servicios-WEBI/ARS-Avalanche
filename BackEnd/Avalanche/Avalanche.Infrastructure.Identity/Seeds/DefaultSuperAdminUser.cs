@@ -22,6 +22,7 @@ namespace Avalanche.Infrastructure.Identity.Seeds
             await userManager.AddToRoleAsync(defaultUser, Roles.Analyst.ToString());
             await userManager.AddToRoleAsync(defaultUser, Roles.SuperAdmin.ToString());
             await userManager.AddToRoleAsync(defaultUser, Roles.Administrator.ToString());
+            await userManager.AddToRoleAsync(defaultUser, Roles.Guest.ToString());
 
         }
     }
