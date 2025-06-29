@@ -10,6 +10,7 @@ using Avalanche.Core.Application.Features.Account.Commands.Authenticate;
 using Avalanche.Core.Application.Features.Account.Commands.RegisterAnalyst;
 using Avalanche.Core.Application.Features.Account.Commands.RegisterUser;
 using Avalanche.Core.Application.Features.Affiliate.Command.Add;
+using Avalanche.Core.Application.Features.AuthorizationType.Queries.GetAll;
 using Avalanche.Core.Application.Features.Client.Command.Add;
 using Avalanche.Core.Application.Features.Coverage.Command.Add;
 using Avalanche.Core.Application.Features.Coverage.Queries.GetAll;
@@ -47,6 +48,16 @@ namespace Avalanche.Core.Application.Mappings
                 .ForMember(x => x.Hospital, opt => opt.Ignore())
                 .ForMember(x => x.Policy, opt => opt.Ignore())
                 .ForMember(x => x.Status, opt => opt.Ignore())
+                .ForMember(x => x.Created, opt => opt.Ignore())
+                .ForMember(x => x.CreatedBy, opt => opt.Ignore())
+                .ForMember(x => x.LastModified, opt => opt.Ignore())
+                .ForMember(x => x.LastModifiedBy, opt => opt.Ignore());
+            #endregion
+
+            #region AuthorizationType
+            CreateMap<AuthorizationType, GetAllAuthorizationTypeQueryResponseChild>()
+                .ReverseMap()
+                .ForMember(x => x.Authorizations, opt => opt.Ignore())
                 .ForMember(x => x.Created, opt => opt.Ignore())
                 .ForMember(x => x.CreatedBy, opt => opt.Ignore())
                 .ForMember(x => x.LastModified, opt => opt.Ignore())
