@@ -6,38 +6,35 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 
-namespace Avalanche.Core.Application.Features.Policy.Queries.GetCoveragesById
+namespace Avalanche.Core.Application.Features.Plan.Queries.GetCoveragesById
 {
-    public class GetCoveragesByIdPolicyQuery : IRequest<GetCoveragesByIdPolicyQueryResponse>
+    public class GetCoveragesByIdPlanQuery : IRequest<GetCoveragesByIdPlanQueryResponse>
     {
         [SwaggerParameter(Description = "Identificador único")]
         [Required(ErrorMessage = "Debe de ingresar el identificador único")]
         public string Id { get; set; }
     }
 
-    public class GetCoveragesByIdPolicyQueryHandler : IRequestHandler<GetCoveragesByIdPolicyQuery, GetCoveragesByIdPolicyQueryResponse>
+    public class GetCoveragesByIdPlanQueryHandler : IRequestHandler<GetCoveragesByIdPlanQuery, GetCoveragesByIdPlanQueryResponse>
     {
-        private readonly IPolicyRepository _policyRepository;
         private readonly IPlanRepository _planRepository;
         private readonly ICoverageRepository _coverageRepository;
 
-        public GetCoveragesByIdPolicyQueryHandler(IPolicyRepository policyRepository, ICoverageRepository coverageRepository,
-            IPlanRepository planRepository)
+        public GetCoveragesByIdPlanQueryHandler(IPlanRepository planRepository, ICoverageRepository coverageRepository)
         {
-            _policyRepository = policyRepository;
             _planRepository = planRepository;
             _coverageRepository = coverageRepository;
         }
 
-        public async Task<GetCoveragesByIdPolicyQueryResponse> Handle(GetCoveragesByIdPolicyQuery query, CancellationToken cancellationToken)
+        public async Task<GetCoveragesByIdPlanQueryResponse> Handle(GetCoveragesByIdPlanQuery query, CancellationToken cancellationToken)
         {
             try
             {
-                GetCoveragesByIdPolicyQueryResponse result = new();
+                GetCoveragesByIdPlanQueryResponse result = new();
 
-                var entity = await _policyRepository.GetByIdWithIncludeAsync(t => t.Id == query.Id, new List<Expression<Func<Domain.Entities.Policy, object>>>
+                var entity = await _planRepository.GetByIdWithIncludeAsync(t => t.Id == query.Id, new List<Expression<Func<Domain.Entities.Plan, object>>>
                 {
-                    m => m.Plan
+                    m => m.PlanCoverages
                 });
 
                 if (entity == null)
@@ -45,14 +42,9 @@ namespace Avalanche.Core.Application.Features.Policy.Queries.GetCoveragesById
                     throw new Exception(ErrorMessages.NotFound);
                 }
 
-                var plan = await _planRepository.GetByIdWithIncludeAsync(t => t.Id == entity.PlanId, new List<Expression<Func<Domain.Entities.Plan, object>>>
-                {
-                    m => m.PlanCoverages
-                });
-
                 List<PlanCoverageResponseDTO> coverages = new();
 
-                foreach (var item in plan.PlanCoverages)
+                foreach (var item in entity.PlanCoverages)
                 {
                     var coverage = await _coverageRepository.GetByIdAsync(item.CoverageId);
 
@@ -69,8 +61,9 @@ namespace Avalanche.Core.Application.Features.Policy.Queries.GetCoveragesById
                 }
 
                 result.Id = entity.Id;
-                result.Number = entity.Number;
-                result.Plan = entity.Plan.Name;
+                result.Name = entity.Name;
+                result.Description = entity.Description;
+                result.MonthlyCost = entity.MonthlyCost;
                 result.Coverages = coverages;
 
                 return result;
