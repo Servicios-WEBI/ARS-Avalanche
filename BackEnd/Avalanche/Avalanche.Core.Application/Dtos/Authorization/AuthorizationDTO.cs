@@ -6,12 +6,12 @@ namespace Avalanche.Core.Application.Dtos.Authorization
     {
         public string Id { get; set; }
         public DateOnly ApplicationDate { get; set; }
-        public string Status { get; set; }
-        public string AuthorizationType { get; set; }
+        public string StatusId { get; set; }
+        public string AuthorizationTypeId { get; set; }
         public double ApplicationAmount { get; set; }
         public double? ApprovedAmount { get; set; }
-        public string Affiliate { get; set; }
-        public string Policy { get; set; }
-        public string Hospital { get; set; }
+        public string AffiliateId { get; set; }
+        public string PolicyId { get; set; }
+        public string HospitalId { get; set; }
     }
 }

@@ -12,11 +12,11 @@ namespace Avalanche.Core.Application.Features.Authorization.Command.Add
     {
         [SwaggerParameter(Description = "Identificador del estado de la autorización")]
         [Required(ErrorMessage = "Debe ingresar el estado de la autorización.")]
-        public string Status { get; set; }
+        public string StatusId { get; set; }
 
         [SwaggerParameter(Description = "Identificador del tipo de autorización")]
         [Required(ErrorMessage = "Debe ingresar el tipo de autorización.")]
-        public string AuthorizationType { get; set; }
+        public string AuthorizationTypeId { get; set; }
 
         [SwaggerParameter(Description = "Monto solicitado en la aplicación")]
         [Required(ErrorMessage = "Debe ingresar el monto solicitado.")]
@@ -27,15 +27,15 @@ namespace Avalanche.Core.Application.Features.Authorization.Command.Add
 
         [SwaggerParameter(Description = "Identificador del afiliado")]
         [Required(ErrorMessage = "Debe ingresar el afiliado")]
-        public string Affiliate { get; set; }
+        public string AffiliateId { get; set; }
 
         [SwaggerParameter(Description = "Identificador de la póliza asociada")]
         [Required(ErrorMessage = "Debe ingresar la póliza")]
-        public string Policy { get; set; }
+        public string PolicyId { get; set; }
 
         [SwaggerParameter(Description = "Identificador del hospital donde se realiza la solicitud")]
         [Required(ErrorMessage = "Debe ingresar el hospital")]
-        public string Hospital { get; set; }
+        public string HospitalId { get; set; }
     }
 
     public class AddAuthorizationCommandHandler : IRequestHandler<AddAuthorizationCommand, AuthorizationDTO>

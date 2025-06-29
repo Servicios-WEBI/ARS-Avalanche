@@ -17,11 +17,11 @@ namespace Avalanche.Core.Application.Features.Authorization.Command.Update
 
         [SwaggerParameter(Description = "Identificador del estado de la autorización")]
         [Required(ErrorMessage = "Debe ingresar el estado de la autorización")]
-        public string Status { get; set; }
+        public string StatusId { get; set; }
 
         [SwaggerParameter(Description = "Identificador del tipo de autorización")]
         [Required(ErrorMessage = "Debe ingresar el tipo de autorización")]
-        public string AuthorizationType { get; set; }
+        public string AuthorizationTypeId { get; set; }
 
         [SwaggerParameter(Description = "Monto solicitado en la aplicación")]
         [Required(ErrorMessage = "Debe ingresar el monto solicitado")]
@@ -32,15 +32,15 @@ namespace Avalanche.Core.Application.Features.Authorization.Command.Update
 
         [SwaggerParameter(Description = "Identificador del afiliado")]
         [Required(ErrorMessage = "Debe ingresar el afiliado")]
-        public string Affiliate { get; set; }
+        public string AffiliateId { get; set; }
 
         [SwaggerParameter(Description = "Identificador de la póliza asociada")]
         [Required(ErrorMessage = "Debe ingresar la póliza")]
-        public string Policy { get; set; }
+        public string PolicyId { get; set; }
 
         [SwaggerParameter(Description = "Identificador del hospital donde se realiza la solicitud")]
         [Required(ErrorMessage = "Debe ingresar el hospital")]
-        public string Hospital { get; set; }
+        public string HospitalId { get; set; }
     }
 
     public class UpdateAuthorizationCommandHandler : IRequestHandler<UpdateAuthorizationCommand, AuthorizationDTO>
@@ -65,13 +65,13 @@ namespace Avalanche.Core.Application.Features.Authorization.Command.Update
                 if (valueToUpdate == null)
                     throw new Exception(ErrorMessages.NotFound);
 
-                valueToUpdate.StatusId = command.Status;
-                valueToUpdate.AuthorizationTypeId = command.AuthorizationType;
+                valueToUpdate.StatusId = command.StatusId;
+                valueToUpdate.AuthorizationTypeId = command.AuthorizationTypeId;
                 valueToUpdate.ApplicationAmount = command.ApplicationAmount;
                 valueToUpdate.ApprovedAmount = command.ApprovedAmount;
-                valueToUpdate.AffiliateId = command.Affiliate;
-                valueToUpdate.PolicyId = command.Policy;
-                valueToUpdate.HospitalId = command.Hospital;
+                valueToUpdate.AffiliateId = command.AffiliateId;
+                valueToUpdate.PolicyId = command.PolicyId;
+                valueToUpdate.HospitalId = command.HospitalId;
 
                 await _authorizationRepository.UpdateAsync(valueToUpdate, valueToUpdate.Id);
 
