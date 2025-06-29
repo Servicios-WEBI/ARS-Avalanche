@@ -17,7 +17,8 @@ namespace Avalanche.Core.Application.Seeds
                     {
                         "CEDULA",
                         "PASAPORTE",
-                        "RNC"
+                        "RNC",
+                        "ACTA DE NACIMIENTO"
                     };
 
                     foreach (var item in documentTypes)

@@ -15,15 +15,25 @@ namespace Avalanche.Core.Application.Seeds
                 {
                     var authorizationTypes = new List<string>
                     {
-                        "Consulta Medica",
-                        "Procedimiento Quirurgico",
-                        "Examen de Laboratorio",
-                        "Estudio de Imagenes",
-                        "Medicamento",
-                        "Hospitalizacion",
-                        "Terapia Fisica",
-                        "Atencion de Urgencia",
-                        "Seguimiento Postoperatorio"
+                        "CONSULTA GENERAL",
+                        "CONSULTA ESPECIALIZADA",
+                        "MEDICAMENTOS",
+                        "EXAMENES DE LABORATORIO",
+                        "ESTUDIOS DE IMAGENES",
+                        "HOSPITALIZACION",
+                        "PROCEDIMIENTOS QUIRURGICOS",
+                        "TERAPIAS DE REHABILITACION",
+                        "ATENCION DE URGENCIAS",
+                        "MATERNIDAD",
+                        "ATENCION ODONTOLOGICA",
+                        "ATENCION PREVENTIVA",
+                        "VACUNACION",
+                        "ENFERMERIA A DOMICILIO",
+                        "TRANSPORTE MEDICO",
+                        "CUIDADOS PALIATIVOS",
+                        "REHABILITACION POSTOPERATORIA",
+                        "ATENCION PSICOLOGICA",
+                        "TERAPIAS ALTERNATIVAS"
                     };
 
                     foreach (var item in authorizationTypes)
