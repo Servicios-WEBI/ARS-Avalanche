@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Avalanche.Core.Application.Dtos.Account;
 using Avalanche.Core.Application.Dtos.Affiliate;
+using Avalanche.Core.Application.Dtos.Authorization;
 using Avalanche.Core.Application.Dtos.Client;
 using Avalanche.Core.Application.Dtos.Coverage;
 using Avalanche.Core.Application.Dtos.Plan;
@@ -33,6 +34,23 @@ namespace Avalanche.Core.Application.Mappings
             CreateMap<RegisterRequest, RegisterAnalystCommand>()
                 .ReverseMap()
                 .ForMember(x => x.Password, opt => opt.Ignore());
+            #endregion
+
+            #region Authorization
+            CreateMap<Authorization, AuthorizationDTO>()
+                .ForMember(x => x.ApplicationDate, opt => opt.Ignore())
+                .ForMember(x => x.Status, opt => opt.Ignore())
+                .ForMember(x => x.Details, opt => opt.Ignore())
+                .ReverseMap()
+                .ForMember(x => x.Affiliate, opt => opt.Ignore())
+                .ForMember(x => x.AuthorizationType, opt => opt.Ignore())
+                .ForMember(x => x.Hospital, opt => opt.Ignore())
+                .ForMember(x => x.Policy, opt => opt.Ignore())
+                .ForMember(x => x.Status, opt => opt.Ignore())
+                .ForMember(x => x.Created, opt => opt.Ignore())
+                .ForMember(x => x.CreatedBy, opt => opt.Ignore())
+                .ForMember(x => x.LastModified, opt => opt.Ignore())
+                .ForMember(x => x.LastModifiedBy, opt => opt.Ignore());
             #endregion
 
             #region Affiliate

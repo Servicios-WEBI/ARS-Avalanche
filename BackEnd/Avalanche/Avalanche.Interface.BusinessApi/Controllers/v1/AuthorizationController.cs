@@ -1,11 +1,10 @@
 ﻿using Avalanche.Core.Application.Constants;
+using Avalanche.Core.Application.Dtos.Authorization;
 using Avalanche.Core.Application.Dtos.Common;
-using Avalanche.Core.Application.Dtos.Plan;
-using Avalanche.Core.Application.Features.Plan.Command.Add;
-using Avalanche.Core.Application.Features.Plan.Command.Delete;
-using Avalanche.Core.Application.Features.Plan.Command.Update;
-using Avalanche.Core.Application.Features.Plan.Queries.GetAll;
-using Avalanche.Core.Application.Features.Plan.Queries.GetCoveragesById;
+using Avalanche.Core.Application.Features.Authorization.Command.Add;
+using Avalanche.Core.Application.Features.Authorization.Command.Delete;
+using Avalanche.Core.Application.Features.Authorization.Command.Update;
+using Avalanche.Core.Application.Features.Authorization.Queries.GetAll;
 using Avalanche.Core.Application.Helpers;
 using Avalanche.Interface.BusinessAPI.Controllers;
 using Microsoft.AspNetCore.Authorization;
@@ -14,29 +13,29 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Avalanche.Interface.BusinessApi.Controllers.v1
 {
-    [Route("api/v1/plan")]
-    [SwaggerTag("Manejo de planes")]
-    public class PlanController : BaseApiController
+    [Route("api/v1/authorization")]
+    [SwaggerTag("Manejo de autorizaciones")]
+    public class AuthorizationController : BaseApiController
     {
         [Authorize(Roles = "Administrator")]
         [HttpGet()]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetAllPlanQueryResponse))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetAllAuthorizationQueryResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDTO))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDTO))]
         [SwaggerOperation(
-           Summary = "Obtener todos los planes",
-           Description = "Nos permite obtener todos los planes disponibles en el sistema"
+           Summary = "Obtener todas las autorizaciones",
+           Description = "Nos permite obtener todas las autorizaciones disponibles en el sistema"
         )]
-        public async Task<IActionResult> GetPlans()
+        public async Task<IActionResult> GetAuthorizations()
         {
             try
             {
-                var result = await Mediator.Send(new GetAllPlanQuery());
+                var result = await Mediator.Send(new GetAllAuthorizationQuery());
 
-                if (result.Plans.Count == 0)
+                if (result.Authorizations.Count == 0)
                 {
-                    return NotFound(ErrorMapperHelper.Error(ErrorMessages.NotFound, "No existen planes en el sistema"));
+                    return NotFound(ErrorMapperHelper.Error(ErrorMessages.NotFound, "No existen autorizaciones en el sistema"));
                 }
                 return Ok(result);
             }
@@ -48,44 +47,16 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
         }
 
         [Authorize(Roles = "Administrator")]
-        [HttpGet("{id}/coverages")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetCoveragesByIdPlanQueryResponse))]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDTO))]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDTO))]
-        [SwaggerOperation(
-           Summary = "Obtener las coberturas de un plan",
-           Description = "Nos permite obtener las coberturas de un plan"
-        )]
-        public async Task<IActionResult> GetPlan(string id)
-        {
-            try
-            {
-                var result = await Mediator.Send(new GetCoveragesByIdPlanQuery() { Id = id});
-
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                if (e.Message == ErrorMessages.NotFound)
-                    return NotFound(ErrorMapperHelper.Error(ErrorMessages.NotFound, "No existe un plan con ese identificador único"));
-
-                return StatusCode(StatusCodes.Status500InternalServerError, ErrorMapperHelper.Error(ErrorMessages.InternalServer, e.Message));
-            }
-
-        }
-
-        [Authorize(Roles = "Administrator")]
         [HttpPost()]
         [SwaggerOperation(
-           Summary = "Crear un plan",
-           Description = "Nos permite crear un plan"
+           Summary = "Crear una autorización",
+           Description = "Nos permite crear una autorización"
         )]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PlanDTO))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorizationDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorDTO))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDTO))]
-        public async Task<IActionResult> PostPlans([FromBody] AddPlanCommand command)
+        public async Task<IActionResult> PostAuthorizations([FromBody] AddAuthorizationCommand command)
         {
             try
             {
@@ -116,14 +87,14 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
         [Authorize(Roles = "Administrator")]
         [HttpPut()]
         [SwaggerOperation(
-           Summary = "Editar un plan",
-           Description = "Nos permite editar un plan"
+           Summary = "Editar una autorización",
+           Description = "Nos permite editar un autorización"
         )]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PlanDTO))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorizationDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorDTO))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDTO))]
-        public async Task<IActionResult> PutPlans([FromBody] UpdatePlanCommand command)
+        public async Task<IActionResult> PutAuthorizations([FromBody] UpdateAuthorizationCommand command)
         {
             try
             {
@@ -148,7 +119,7 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
             catch (Exception e)
             {
                 if (e.Message == ErrorMessages.NotFound)
-                    return NotFound(ErrorMapperHelper.Error(ErrorMessages.NotFound, "No existe un plan con ese identificador único"));
+                    return NotFound(ErrorMapperHelper.Error(ErrorMessages.NotFound, "No existe un autorización con ese identificador único"));
 
                 return StatusCode(StatusCodes.Status500InternalServerError, ErrorMapperHelper.Error(ErrorMessages.InternalServer, e.Message));
             }
@@ -157,18 +128,18 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
         [Authorize(Roles = "Administrator")]
         [HttpDelete("{id}")]
         [SwaggerOperation(
-           Summary = "Eliminar un plan",
-           Description = "Nos permite eliminar un plan"
+           Summary = "Eliminar un autorización",
+           Description = "Nos permite eliminar un autorización"
         )]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PlanDTO))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorizationDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorDTO))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDTO))]
-        public async Task<IActionResult> DeletePlans([FromRoute] string id)
+        public async Task<IActionResult> DeleteAuthorizations([FromRoute] string id)
         {
             try
             {
-                DeletePlanCommand command = new() { Id = id };
+                DeleteAuthorizationCommand command = new() { Id = id };
 
                 if (!ModelState.IsValid)
                 {
@@ -186,7 +157,7 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
             catch (Exception e)
             {
                 if (e.Message == ErrorMessages.NotFound)
-                    return NotFound(ErrorMapperHelper.Error(ErrorMessages.NotFound, "No existe un plan con ese identificador único"));
+                    return NotFound(ErrorMapperHelper.Error(ErrorMessages.NotFound, "No existe un autorización con ese identificador único"));
 
                 return StatusCode(StatusCodes.Status500InternalServerError, ErrorMapperHelper.Error(ErrorMessages.InternalServer, e.Message));
             }
