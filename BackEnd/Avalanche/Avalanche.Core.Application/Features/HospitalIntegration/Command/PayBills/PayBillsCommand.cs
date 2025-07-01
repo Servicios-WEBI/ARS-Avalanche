@@ -90,7 +90,7 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Command.PayBil
                     {
                         bill.AuthorizationNumber = item.AuthorizationNumber;
                         bill.Status = "Pagada parcialmente";
-                        bill.Details = $"El monto aprobado fue de {authorization.ApprovedAmount}";
+                        bill.Details = $"El monto aprobado fue de {(authorization.ApprovedAmount == null ? 0 : authorization.ApprovedAmount)}";
                         response.Bills.Add(bill);
                         response.TotalAmount += item.Amount;
                         response.RefusedAmount += item.Amount;
