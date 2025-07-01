@@ -9,7 +9,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Avalanche.Interface.BusinessApi.Controllers.v1
 {
-    [Route("api/v1/authorizationType")]
+    [Route("api/v1/authorization-type")]
     [SwaggerTag("Manejo de tipos de autorizaciones")]
     public class AuthorizationTypeController : BaseApiController
     {
