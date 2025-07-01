@@ -1,5 +1,7 @@
 ﻿using Avalanche.Core.Application.Constants;
 using Avalanche.Core.Application.Dtos.Common;
+using Avalanche.Core.Application.Dtos.HospitalIntegration;
+using Avalanche.Core.Application.Features.HospitalIntegration.Command.PayBills;
 using Avalanche.Core.Application.Features.HospitalIntegration.Queries.ValidateAffiliate;
 using Avalanche.Core.Application.Helpers;
 using Avalanche.Interface.BusinessAPI.Controllers;
@@ -15,7 +17,7 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
     public class HospitalIntegrationController : BaseApiController
     {
         [Authorize(Roles = "Guest")]
-        [HttpGet("validateAffiliate")]
+        [HttpGet("validate-affiliate")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ValidateAffiliateQueryResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ValidateAffiliateQueryResponse))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]
@@ -47,7 +49,6 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
 
                 if (!result.Exists)
                 {
-                    
                     return NotFound(result);
                 }
                 return Ok(result);
@@ -56,6 +57,49 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ErrorMapperHelper.Error(ErrorMessages.InternalServer, e.Message));
             }
-        }        
+        }
+
+        [Authorize(Roles = "Guest")]
+        [HttpPost("pay-bills")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PayBillResponseDTO))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(PayBillResponseDTO))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDTO))]
+        [SwaggerOperation(
+           Summary = "Pago de facturas",
+           Description = "Permite a los hospitales recibir el pago por las solicitudes aprobadas"
+        )]
+        public async Task<IActionResult> PayBills([FromBody] PayBillsCommand command)
+        {
+            try
+            {
+                if (command == null)
+                {
+                    return BadRequest(ErrorMapperHelper.Error(ErrorMessages.BadRequest, "El cuerpo de la solicitud no puede estar vacío o tiene errores de formato."));
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList<string>();
+
+                    return BadRequest(ErrorMapperHelper.ListError(errors));
+                }
+
+                var result = await Mediator.Send(command);
+
+                if (result.Status == "Fallido")
+                {
+                    return NotFound(result);
+                }
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ErrorMapperHelper.Error(ErrorMessages.InternalServer, e.Message));
+            }
+        }
     }
 }
