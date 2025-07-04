@@ -9,7 +9,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Avalanche.Interface.BusinessApi.Controllers.v1
 {
-    [Route("api/v1/institutionType")]
+    [Route("api/v1/institution-type")]
     [SwaggerTag("Manejo de tipos de instituciones")]
     public class InstitutionTypeController : BaseApiController
     {
