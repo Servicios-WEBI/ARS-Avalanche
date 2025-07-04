@@ -39,6 +39,7 @@ namespace Avalanche.Core.Application.Features.Hospital.Command.Add
             try
             {
                 HospitalDTO response = new();
+                command.Name = command.Name.ToUpper();
                 var valueToAdd = _mapper.Map<Domain.Entities.Hospital>(command);
                 var entity = await _hospitalRepository.AddAsync(valueToAdd);
 

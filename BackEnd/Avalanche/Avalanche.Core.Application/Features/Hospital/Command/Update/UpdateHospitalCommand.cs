@@ -50,7 +50,7 @@ namespace Avalanche.Core.Application.Features.Hospital.Command.Update
                 if (valueToUpdate == null)
                     throw new Exception(ErrorMessages.NotFound);
 
-                valueToUpdate.Name = command.Name;
+                valueToUpdate.Name = command.Name.ToUpper();
                 valueToUpdate.InstitutionTypeId = command.InstitutionTypeId;
                 valueToUpdate.StatusId = command.StatusId;
 
