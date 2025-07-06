@@ -9,7 +9,7 @@ using Avalanche.Core.Application.Dtos.Plan;
 using Avalanche.Core.Application.Dtos.Policy;
 using Avalanche.Core.Application.Features.Account.Commands.Authenticate;
 using Avalanche.Core.Application.Features.Account.Commands.RegisterAnalyst;
-using Avalanche.Core.Application.Features.Account.Commands.RegisterUser;
+using Avalanche.Core.Application.Features.Account.Commands.RegisterAdmin;
 using Avalanche.Core.Application.Features.Affiliate.Command.Add;
 using Avalanche.Core.Application.Features.Authorization.Command.Add;
 using Avalanche.Core.Application.Features.AuthorizationType.Queries.GetAll;
@@ -34,10 +34,13 @@ namespace Avalanche.Core.Application.Mappings
 			CreateMap<AuthenticationRequest, AuthenticateCommand>()
 				.ReverseMap();
 
-            CreateMap<RegisterRequest, RegisterUserCommand>()
-                .ReverseMap();
+            CreateMap<RegisterRequest, RegisterAdminCommand>()
+                .ForMember(x => x.Image, opt => opt.Ignore())
+                .ReverseMap()
+                .ForMember(x => x.Password, opt => opt.Ignore());
 
             CreateMap<RegisterRequest, RegisterAnalystCommand>()
+                .ForMember(x => x.Image, opt => opt.Ignore())
                 .ReverseMap()
                 .ForMember(x => x.Password, opt => opt.Ignore());
             #endregion

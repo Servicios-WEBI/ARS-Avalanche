@@ -25,6 +25,7 @@ namespace Avalanche.Core.Application.Features.Account.Commands.RegisterAnalyst
 
         [SwaggerParameter(Description = "Correo")]
         [Required(ErrorMessage = "Debe de ingresar el correo")]
+        [EmailAddress(ErrorMessage = "Debe ingresar un correo electrónico válido")]
         public string Email { get; set; }
 
         [SwaggerParameter(Description = "Dirección")]
@@ -66,7 +67,7 @@ namespace Avalanche.Core.Application.Features.Account.Commands.RegisterAnalyst
                 }
                 request.Password = "ARS@" + Guid.NewGuid().ToString().Substring(0,8);
                 
-                var response = await _accountService.RegisterAnalystAsync(request);
+                var response = await _accountService.RegisterUserAsync(request, Enums.Roles.Analyst);
 
                 if (response.Status == "Fallido")
 				{
