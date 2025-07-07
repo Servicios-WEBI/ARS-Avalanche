@@ -23,6 +23,7 @@ using Avalanche.Core.Application.Features.Plan.Queries.GetAll;
 using Avalanche.Core.Application.Features.Policy.Command.Add;
 using Avalanche.Core.Application.Features.Status.Queries.GetAll;
 using Avalanche.Core.Domain.Entities;
+using Avalanche.Core.Application.Features.Affiliate.Command.AssosciatePolicy;
 
 namespace Avalanche.Core.Application.Mappings
 {
@@ -112,6 +113,36 @@ namespace Avalanche.Core.Application.Mappings
                 .ForMember(x => x.Authorizations, opt => opt.Ignore())
                 .ForMember(x => x.Status, opt => opt.Ignore())
                 .ForMember(x => x.Client, opt => opt.Ignore())
+                .ForMember(x => x.Created, opt => opt.Ignore())
+                .ForMember(x => x.CreatedBy, opt => opt.Ignore())
+                .ForMember(x => x.LastModified, opt => opt.Ignore())
+                .ForMember(x => x.LastModifiedBy, opt => opt.Ignore());
+
+            CreateMap<AffiliatePolicy, AffiliatePolicyDTO>()
+                .ForMember(x => x.AffiliateStatus, opt => opt.Ignore())
+                .ForMember(x => x.Status, opt => opt.Ignore())
+                .ForMember(x => x.Details, opt => opt.Ignore())
+                .ReverseMap()
+                .ForMember(x => x.Id, opt => opt.Ignore())
+                .ForMember(x => x.DesAffiliationDate, opt => opt.Ignore())
+                .ForMember(x => x.Affiliate, opt => opt.Ignore())
+                .ForMember(x => x.Policy, opt => opt.Ignore())
+                .ForMember(x => x.Status, opt => opt.Ignore())
+                .ForMember(x => x.StatusId, opt => opt.Ignore())
+                .ForMember(x => x.Created, opt => opt.Ignore())
+                .ForMember(x => x.CreatedBy, opt => opt.Ignore())
+                .ForMember(x => x.LastModified, opt => opt.Ignore())
+                .ForMember(x => x.LastModifiedBy, opt => opt.Ignore());
+
+            CreateMap<AffiliatePolicy, AssociatePolicyAffiliateCommand>()
+                .ReverseMap()
+                .ForMember(x => x.AffiliationDate, opt => opt.Ignore())
+                .ForMember(x => x.IsPrincipal, opt => opt.Ignore())
+                .ForMember(x => x.DesAffiliationDate, opt => opt.Ignore())
+                .ForMember(x => x.Affiliate, opt => opt.Ignore())
+                .ForMember(x => x.Policy, opt => opt.Ignore())
+                .ForMember(x => x.Status, opt => opt.Ignore())
+                .ForMember(x => x.StatusId, opt => opt.Ignore())
                 .ForMember(x => x.Created, opt => opt.Ignore())
                 .ForMember(x => x.CreatedBy, opt => opt.Ignore())
                 .ForMember(x => x.LastModified, opt => opt.Ignore())

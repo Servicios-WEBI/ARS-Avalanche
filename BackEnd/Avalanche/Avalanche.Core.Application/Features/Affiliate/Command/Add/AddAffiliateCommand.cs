@@ -64,10 +64,10 @@ namespace Avalanche.Core.Application.Features.Affiliate.Command.Add
         {
             try
             {
-                var documentType = await _documentTypeRepository.GetByNameAsync(command.DocumentType);
+                var documentType = await _documentTypeRepository.GetByNameAsync(command.DocumentType.ToUpper());
                 if (documentType == null)
                 {
-                    throw new Exception($"No se encontró el tipo de documento: {command.DocumentType}");
+                    throw new Exception($"No se encontró el tipo de documento: {command.DocumentType.ToUpper()}");
                 }
 
                 var affiliate = await _affilliateRepository.GetByDocumentNumberAsync(a => a.DocumentNumber == command.DocumentNumber, new List<Expression<Func<Domain.Entities.Affiliate, object>>>{});
@@ -96,7 +96,7 @@ namespace Avalanche.Core.Application.Features.Affiliate.Command.Add
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }
     }
