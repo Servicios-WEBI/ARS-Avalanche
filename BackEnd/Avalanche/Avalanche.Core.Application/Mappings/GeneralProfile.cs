@@ -9,7 +9,7 @@ using Avalanche.Core.Application.Dtos.Plan;
 using Avalanche.Core.Application.Dtos.Policy;
 using Avalanche.Core.Application.Features.Account.Commands.Authenticate;
 using Avalanche.Core.Application.Features.Account.Commands.RegisterAnalyst;
-using Avalanche.Core.Application.Features.Account.Commands.RegisterUser;
+using Avalanche.Core.Application.Features.Account.Commands.RegisterAdmin;
 using Avalanche.Core.Application.Features.Affiliate.Command.Add;
 using Avalanche.Core.Application.Features.Authorization.Command.Add;
 using Avalanche.Core.Application.Features.AuthorizationType.Queries.GetAll;
@@ -23,6 +23,7 @@ using Avalanche.Core.Application.Features.Plan.Queries.GetAll;
 using Avalanche.Core.Application.Features.Policy.Command.Add;
 using Avalanche.Core.Application.Features.Status.Queries.GetAll;
 using Avalanche.Core.Domain.Entities;
+using Avalanche.Core.Application.Features.Affiliate.Command.AssosciatePolicy;
 
 namespace Avalanche.Core.Application.Mappings
 {
@@ -34,10 +35,13 @@ namespace Avalanche.Core.Application.Mappings
 			CreateMap<AuthenticationRequest, AuthenticateCommand>()
 				.ReverseMap();
 
-            CreateMap<RegisterRequest, RegisterUserCommand>()
-                .ReverseMap();
+            CreateMap<RegisterRequest, RegisterAdminCommand>()
+                .ForMember(x => x.Image, opt => opt.Ignore())
+                .ReverseMap()
+                .ForMember(x => x.Password, opt => opt.Ignore());
 
             CreateMap<RegisterRequest, RegisterAnalystCommand>()
+                .ForMember(x => x.Image, opt => opt.Ignore())
                 .ReverseMap()
                 .ForMember(x => x.Password, opt => opt.Ignore());
             #endregion
@@ -109,6 +113,36 @@ namespace Avalanche.Core.Application.Mappings
                 .ForMember(x => x.Authorizations, opt => opt.Ignore())
                 .ForMember(x => x.Status, opt => opt.Ignore())
                 .ForMember(x => x.Client, opt => opt.Ignore())
+                .ForMember(x => x.Created, opt => opt.Ignore())
+                .ForMember(x => x.CreatedBy, opt => opt.Ignore())
+                .ForMember(x => x.LastModified, opt => opt.Ignore())
+                .ForMember(x => x.LastModifiedBy, opt => opt.Ignore());
+
+            CreateMap<AffiliatePolicy, AffiliatePolicyDTO>()
+                .ForMember(x => x.AffiliateStatus, opt => opt.Ignore())
+                .ForMember(x => x.Status, opt => opt.Ignore())
+                .ForMember(x => x.Details, opt => opt.Ignore())
+                .ReverseMap()
+                .ForMember(x => x.Id, opt => opt.Ignore())
+                .ForMember(x => x.DesAffiliationDate, opt => opt.Ignore())
+                .ForMember(x => x.Affiliate, opt => opt.Ignore())
+                .ForMember(x => x.Policy, opt => opt.Ignore())
+                .ForMember(x => x.Status, opt => opt.Ignore())
+                .ForMember(x => x.StatusId, opt => opt.Ignore())
+                .ForMember(x => x.Created, opt => opt.Ignore())
+                .ForMember(x => x.CreatedBy, opt => opt.Ignore())
+                .ForMember(x => x.LastModified, opt => opt.Ignore())
+                .ForMember(x => x.LastModifiedBy, opt => opt.Ignore());
+
+            CreateMap<AffiliatePolicy, AssociatePolicyAffiliateCommand>()
+                .ReverseMap()
+                .ForMember(x => x.AffiliationDate, opt => opt.Ignore())
+                .ForMember(x => x.IsPrincipal, opt => opt.Ignore())
+                .ForMember(x => x.DesAffiliationDate, opt => opt.Ignore())
+                .ForMember(x => x.Affiliate, opt => opt.Ignore())
+                .ForMember(x => x.Policy, opt => opt.Ignore())
+                .ForMember(x => x.Status, opt => opt.Ignore())
+                .ForMember(x => x.StatusId, opt => opt.Ignore())
                 .ForMember(x => x.Created, opt => opt.Ignore())
                 .ForMember(x => x.CreatedBy, opt => opt.Ignore())
                 .ForMember(x => x.LastModified, opt => opt.Ignore())
@@ -194,6 +228,7 @@ namespace Avalanche.Core.Application.Mappings
 
             #region Hospital
             CreateMap<Hospital, HospitalDTO>()
+                .ForMember(x => x.UserName, opt => opt.Ignore())
                 .ForMember(x => x.Status, opt => opt.Ignore())
                 .ForMember(x => x.Details, opt => opt.Ignore())
                 .ReverseMap()

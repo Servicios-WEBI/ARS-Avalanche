@@ -16,6 +16,9 @@ namespace Avalanche.Core.Application.Features.Hospital.Queries.GetAll
         [SwaggerSchema(Description = "Nombre de la institución")]
         public string Name { get; set; }
 
+        [SwaggerSchema(Description = "Correo de la institución")]
+        public string Email { get; set; }
+
         [SwaggerSchema(Description = "ID del tipo de institución")]
         public string InstitutionTypeId { get; set; }
 

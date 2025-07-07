@@ -1,12 +1,12 @@
 ﻿using Avalanche.Core.Application.Dtos.Account;
+using Avalanche.Core.Application.Enums;
 
 namespace Avalanche.Core.Application.Interfaces.Services
 {
     public interface IAccountService
 	{
 		Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request);
-		Task<RegisterResponse> RegisterUserAsync(RegisterRequest request);
-		Task<RegisterResponse> RegisterAnalystAsync(RegisterRequest request);
+		Task<RegisterResponse> RegisterUserAsync(RegisterRequest request, Roles role);
         Task<ConfirmEmailResponse> ConfirmEmailAsync(string userId, string token);
 		Task<ResetPasswordResponse> ResetPasswordAsync(string email);
 		ConfirmCodeResponse ConfirmCode(string code);

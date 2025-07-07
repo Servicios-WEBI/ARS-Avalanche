@@ -97,71 +97,10 @@ namespace Avalanche.Infrastructure.Identity.Services
             }
         }
 
-        public async Task<RegisterResponse> RegisterUserAsync(RegisterRequest request)
+        public async Task<RegisterResponse> RegisterUserAsync(RegisterRequest request, Roles role)
         {
             RegisterResponse response = await ValidateUserBeforeRegistrationAsync(request);
-            if (response.Status == "Fallido")
-            {
-                return response;
-            }
 
-            response.Details = new();
-            var user = new ApplicationUser
-            {
-                Email = request.Email,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                UserName = request.UserName,
-                PhoneNumber = request.PhoneNumber,
-                UrlImage = request.UrlImage,
-                Address = request.Address
-            };
-
-            try
-            {
-                var result = await _userManager.CreateAsync(user, request.Password);
-                if (result.Succeeded)
-                {
-                    await _userManager.AddToRoleAsync(user, Roles.Analyst.ToString());
-                    var verificationUri = await SendVerificationEmailUri(user);
-                    await _emailService.SendAsync(new EmailRequest()
-                    {
-                        To = user.Email,
-                        Body = EmailHelper.MakeEmailForConfirm(verificationUri, user.FirstName + " " + user.LastName),
-                        Subject = "Confirmar Cuenta"
-                    });
-                }
-                else
-                {
-                    response.Status = "Fallido";
-                    foreach (var error in result.Errors)
-                    {
-                        ErrorDetailsDTO errorDTO = new()
-                        {
-                            Code = ErrorMessages.BadRequest,
-                            Message = error.Description
-                        };
-                        response.Details.Add(errorDTO);
-                    }
-                    return response;
-                }
-                response.Status = "Exitoso";
-                response.Details = [new ErrorDetailsDTO { Code = "000", Message = "Se insertó correctamente el usuario" }];
-
-                _logger.LogInformation("Registro de usuario finalizado correctamente");
-                return response;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Un error ocurrió tratando de crear el usuario");
-                throw;
-            }
-        }
-
-        public async Task<RegisterResponse> RegisterAnalystAsync(RegisterRequest request)
-        {
-            RegisterResponse response = await ValidateUserBeforeRegistrationAsync(request);
-            
             if (response.Status == "Fallido")
             {
                 return response;
@@ -184,14 +123,29 @@ namespace Avalanche.Infrastructure.Identity.Services
             try
             {
                 var result = await _userManager.CreateAsync(user, request.Password);
+                string userRole = "";
+
+                switch (role)
+                {
+                    case Roles.Analyst:
+                        userRole = "analista";
+                        break;
+                    case Roles.Administrator:
+                        userRole = "administrador";
+                        break;
+                    case Roles.Guest:
+                        userRole = "hospital";
+                        break;
+                }
+
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, Roles.Analyst.ToString());
+                    await _userManager.AddToRoleAsync(user, role.ToString());
                     await _emailService.SendAsync(new EmailRequest()
                     {
                         To = user.Email,
                         Body = EmailHelper.MakeEmailForConfirmed(user.FirstName + " " + user.LastName),
-                        Subject = "Registro de analista"
+                        Subject = $"Registro de {userRole}"
                     });
                 }
                 else
@@ -209,15 +163,17 @@ namespace Avalanche.Infrastructure.Identity.Services
                     return response;
                 }
                 response.Status = "Exitoso";
-                response.Details = [new ErrorDetailsDTO { Code = "000", Message = "Se insertó correctamente el analista" }];
+                response.Details = [new ErrorDetailsDTO { Code = "000", Message = $"Se insertó correctamente el {userRole}"}];
 
-                _logger.LogInformation("Registro de analista finalizado correctamente");
+                _logger.LogInformation($"La contraseña del usuario {request.UserName} es {request.Password}");
                 return response;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Un error ocurrió tratando de crear el analista");
-                throw;
+                _logger.LogError(ex.InnerException, "Error al crear usuario");
+                response.Status = "Fallido";
+                response.Details = [new ErrorDetailsDTO { Code = "000", Message = "Ocurrió algo mientras se creaba el usuario" }];
+                return response;
             }
         }
 
