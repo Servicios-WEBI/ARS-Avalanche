@@ -36,6 +36,7 @@ namespace Avalanche.Core.Application.Features.Hospital.Queries.GetAll
                 {
                     Id = h.Id,
                     Name = h.Name,
+                    Email = h.Email,
                     InstitutionType = h.InstitutionType.Name,
                     InstitutionTypeId = h.InstitutionTypeId,
                     Status = h.Status.Name,

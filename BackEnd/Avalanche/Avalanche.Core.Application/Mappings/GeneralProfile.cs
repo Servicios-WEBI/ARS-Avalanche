@@ -228,6 +228,7 @@ namespace Avalanche.Core.Application.Mappings
 
             #region Hospital
             CreateMap<Hospital, HospitalDTO>()
+                .ForMember(x => x.UserName, opt => opt.Ignore())
                 .ForMember(x => x.Status, opt => opt.Ignore())
                 .ForMember(x => x.Details, opt => opt.Ignore())
                 .ReverseMap()

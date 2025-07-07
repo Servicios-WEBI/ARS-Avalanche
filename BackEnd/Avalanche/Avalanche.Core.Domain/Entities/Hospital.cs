@@ -5,6 +5,7 @@ namespace Avalanche.Core.Domain.Entities
     public class Hospital : AuditableBaseEntity
     {
         public string Name { get; set; }
+        public string Email { get; set; }
         public InstitutionType InstitutionType { get; set; }
         public string InstitutionTypeId { get; set; }
         public Status Status { get; set; }

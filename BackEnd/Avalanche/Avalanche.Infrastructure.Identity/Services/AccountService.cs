@@ -123,6 +123,21 @@ namespace Avalanche.Infrastructure.Identity.Services
             try
             {
                 var result = await _userManager.CreateAsync(user, request.Password);
+                string userRole = "";
+
+                switch (role)
+                {
+                    case Roles.Analyst:
+                        userRole = "analista";
+                        break;
+                    case Roles.Administrator:
+                        userRole = "administrador";
+                        break;
+                    case Roles.Guest:
+                        userRole = "hospital";
+                        break;
+                }
+
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, role.ToString());
@@ -130,7 +145,7 @@ namespace Avalanche.Infrastructure.Identity.Services
                     {
                         To = user.Email,
                         Body = EmailHelper.MakeEmailForConfirmed(user.FirstName + " " + user.LastName),
-                        Subject = role == Roles.Analyst ? "Registro de analista" : "Registro de administrador"
+                        Subject = $"Registro de {userRole}"
                     });
                 }
                 else
@@ -148,8 +163,7 @@ namespace Avalanche.Infrastructure.Identity.Services
                     return response;
                 }
                 response.Status = "Exitoso";
-                response.Details = [new ErrorDetailsDTO { Code = "000",
-                    Message = role == Roles.Analyst ? "Se insertó correctamente el analista" : "Se insertó correctamente el administrador" }];
+                response.Details = [new ErrorDetailsDTO { Code = "000", Message = $"Se insertó correctamente el {userRole}"}];
 
                 _logger.LogInformation($"La contraseña del usuario {request.UserName} es {request.Password}");
                 return response;
