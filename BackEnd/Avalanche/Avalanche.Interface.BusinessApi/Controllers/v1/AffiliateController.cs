@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Avalanche.Core.Application.Features.Affiliate.Queries.GetById;
 using Avalanche.Core.Application.Features.Affiliate.Queries.GetByDocumentNumber;
+using Avalanche.Core.Application.Features.Affiliate.Command.AssosciatePolicy;
 
 namespace Avalanche.Interface.BusinessApi.Controllers.v1
 {
@@ -115,6 +116,44 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDTO))]
         public async Task<IActionResult> PostAffiliates([FromBody] AddAffiliateCommand command)
+        {
+            try
+            {
+                if (command == null)
+                {
+                    return BadRequest(ErrorMapperHelper.Error(ErrorMessages.BadRequest, "El cuerpo de la solicitud no puede estar vacío o tiene errores de formato."));
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList<string>();
+
+                    return BadRequest(ErrorMapperHelper.ListError(errors));
+                }
+
+                var result = await Mediator.Send(command);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ErrorMapperHelper.Error(ErrorMessages.InternalServer, e.Message));
+            }
+        }
+
+        [Authorize(Roles = "Administrator, Analyst")]
+        [HttpPost("associate-policy")]
+        [SwaggerOperation(
+           Summary = "Asociar afiliado a poliza",
+           Description = "Nos permite asociar los afiliados a las pólizas de los clientes"
+        )]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AffiliatePolicyDTO))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorDTO))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDTO))]
+        public async Task<IActionResult> AssociatePolicy([FromBody] AssociatePolicyAffiliateCommand command)
         {
             try
             {

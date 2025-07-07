@@ -6,7 +6,7 @@ using Avalanche.Core.Application.Features.Account.Commands.ChangePassword;
 using Avalanche.Core.Application.Features.Account.Commands.ConfirmCode;
 using Avalanche.Core.Application.Features.Account.Commands.ConfirmEmail;
 using Avalanche.Core.Application.Features.Account.Commands.RegisterAnalyst;
-using Avalanche.Core.Application.Features.Account.Commands.RegisterUser;
+using Avalanche.Core.Application.Features.Account.Commands.RegisterAdmin;
 using Avalanche.Core.Application.Features.Account.Commands.ResetPassword;
 using Avalanche.Core.Application.Features.Account.Queries.GetRefreshAccessToken;
 using Avalanche.Core.Application.Features.Account.Queries.GetValidationRefreshToken;
@@ -150,15 +150,15 @@ namespace Avalanche.Interface.Authentication.Controllers
             }
         }
 
-        [HttpPost("register")]
+        [HttpPost("register-admin")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RegisterResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(RegisterResponse))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(RegisterResponse))]
         [SwaggerOperation(
-           Summary = "Registro",
-           Description = "Registrese para usar el sistema"
+           Summary = "Registro de administrador",
+           Description = "Cree usuarios administradores para usar el sistema"
         )]
-        public async Task<IActionResult> RegisterUser([FromForm] RegisterUserCommand command)
+        public async Task<IActionResult> RegisterAdmin([FromForm] RegisterAdminCommand command)
         {
             try
             {
@@ -187,13 +187,13 @@ namespace Avalanche.Interface.Authentication.Controllers
             }
         }
 
-        [HttpPost("registerAnalyst")]
+        [HttpPost("register-analyst")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RegisterResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(RegisterResponse))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(RegisterResponse))]
         [SwaggerOperation(
            Summary = "Registro de analista",
-           Description = "Registrese para usar el sistema"
+           Description = "Cree usuarios analistas para usar el sistema"
         )]
         public async Task<IActionResult> RegisterAnalyst([FromForm] RegisterAnalystCommand command)
         {
