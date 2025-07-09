@@ -24,6 +24,7 @@ using Avalanche.Core.Application.Features.Policy.Command.Add;
 using Avalanche.Core.Application.Features.Status.Queries.GetAll;
 using Avalanche.Core.Domain.Entities;
 using Avalanche.Core.Application.Features.Affiliate.Command.AssosciatePolicy;
+using Avalanche.Core.Application.Dtos.PlanCoverage;
 
 namespace Avalanche.Core.Application.Mappings
 {
@@ -268,6 +269,17 @@ namespace Avalanche.Core.Application.Mappings
                 .ReverseMap()
                 .ForMember(x => x.PlanCoverages, opt => opt.Ignore())
                 .ForMember(x => x.Policies, opt => opt.Ignore())
+                .ForMember(x => x.Created, opt => opt.Ignore())
+                .ForMember(x => x.CreatedBy, opt => opt.Ignore())
+                .ForMember(x => x.LastModified, opt => opt.Ignore())
+                .ForMember(x => x.LastModifiedBy, opt => opt.Ignore());
+
+            CreateMap<PlanCoverage, PlanCoverageDTO>()
+                .ReverseMap()
+                .ForMember(x => x.Id, opt => opt.Ignore())
+                .ForMember(x => x.PlanId, opt => opt.Ignore())
+                .ForMember(x => x.Plan, opt => opt.Ignore())
+                .ForMember(x => x.Coverage, opt => opt.Ignore())
                 .ForMember(x => x.Created, opt => opt.Ignore())
                 .ForMember(x => x.CreatedBy, opt => opt.Ignore())
                 .ForMember(x => x.LastModified, opt => opt.Ignore())
