@@ -5,15 +5,16 @@ using Avalanche.Core.Application.Features.Account.Commands.Authenticate;
 using Avalanche.Core.Application.Features.Account.Commands.ChangePassword;
 using Avalanche.Core.Application.Features.Account.Commands.ConfirmCode;
 using Avalanche.Core.Application.Features.Account.Commands.ConfirmEmail;
-using Avalanche.Core.Application.Features.Account.Commands.RegisterAnalyst;
 using Avalanche.Core.Application.Features.Account.Commands.RegisterAdmin;
+using Avalanche.Core.Application.Features.Account.Commands.RegisterAnalyst;
 using Avalanche.Core.Application.Features.Account.Commands.ResetPassword;
 using Avalanche.Core.Application.Features.Account.Queries.GetRefreshAccessToken;
 using Avalanche.Core.Application.Features.Account.Queries.GetValidationRefreshToken;
 using Avalanche.Core.Application.Helpers;
+using Avalanche.Core.Domain.Settings;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net.Mime;
 using System.Text.Json;
@@ -30,13 +31,13 @@ namespace Avalanche.Interface.Authentication.Controllers
 
         private readonly IHostEnvironment env;
 
-        private readonly IConfiguration _configuration;
+        private readonly RefreshJWTSettings _refreshSettings;
         private readonly ILogger<AccountController> _logger;
 
-        public AccountController(IHostEnvironment hostEnvironment, IConfiguration configuration, ILogger<AccountController> logger)
+        public AccountController(IHostEnvironment hostEnvironment, IOptions<RefreshJWTSettings> refreshSettings, ILogger<AccountController> logger)
         {
             env = hostEnvironment;
-            _configuration = configuration;
+            _refreshSettings = refreshSettings.Value;
             _logger = logger;
         }
 
@@ -90,7 +91,7 @@ namespace Avalanche.Interface.Authentication.Controllers
                 {
                     HttpOnly = true,
                     Secure = true,
-                    Expires = DateTime.UtcNow.AddDays(5),
+                    Expires = DateTime.Now.AddMinutes(_refreshSettings.DurationInMinutes),
                     SameSite = SameSiteMode.None
                 });
 
@@ -438,7 +439,7 @@ namespace Avalanche.Interface.Authentication.Controllers
                 {
                     HttpOnly = true,
                     Secure = true,
-                    Expires = DateTime.UtcNow.AddDays(5),
+                    Expires = DateTime.Now.AddMinutes(_refreshSettings.DurationInMinutes),
                     SameSite = SameSiteMode.None
                 });
 
