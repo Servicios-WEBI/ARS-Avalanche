@@ -9,6 +9,7 @@ namespace Avalanche.Infrastructure.Persistence.Contexts
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
         public DbSet<Affiliate> Affiliate { get; set; }
         public DbSet<AffiliatePolicy> AffiliatePolicie { get; set; }
+        public DbSet<Analyst> Analysts { get; set; }
         public DbSet<Authorization> Authorization { get; set; }
         public DbSet<AuthorizationType> AuthorizationType { get; set; }
         public DbSet<Client> Client { get; set; }
@@ -53,6 +54,9 @@ namespace Avalanche.Infrastructure.Persistence.Contexts
             modelBuilder.Entity<AffiliatePolicy>()
                 .ToTable("AffiliatePolicies");
 
+            modelBuilder.Entity<Analyst>()
+                .ToTable("Analysts");
+
             modelBuilder.Entity<Authorization>()
                 .ToTable("Authorizations");
 
@@ -92,6 +96,9 @@ namespace Avalanche.Infrastructure.Persistence.Contexts
                 .HasKey(x => x.Id);
 
             modelBuilder.Entity<AffiliatePolicy>()
+                .HasKey(x => x.Id);
+            
+            modelBuilder.Entity<Analyst>()
                 .HasKey(x => x.Id);
 
             modelBuilder.Entity<Authorization>()
@@ -169,6 +176,12 @@ namespace Avalanche.Infrastructure.Persistence.Contexts
                 .HasOne<Status>(x => x.Status)
                 .WithMany(x => x.AffiliatePolicies)
                 .HasForeignKey(x => x.StatusId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Analyst>()
+                .HasMany<Authorization>(x => x.Authorizations)
+                .WithOne(x => x.Analyst)
+                .HasForeignKey(x => x.AssignedAnalyst)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Authorization>()
@@ -252,6 +265,8 @@ namespace Avalanche.Infrastructure.Persistence.Contexts
 
             #region Property configurations
             modelBuilder.Entity<Affiliate>().HasIndex(x => x.DocumentNumber).IsUnique();
+
+            modelBuilder.Entity<Authorization>().HasIndex(x => x.AssignedAnalyst).IsUnique();
 
             modelBuilder.Entity<Client>().HasIndex(x => x.DocumentNumber).IsUnique();
 
