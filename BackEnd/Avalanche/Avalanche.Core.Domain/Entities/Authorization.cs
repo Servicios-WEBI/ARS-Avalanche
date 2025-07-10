@@ -17,5 +17,7 @@ namespace Avalanche.Core.Domain.Entities
         public string PolicyId { get; set; }
         public Hospital Hospital { get; set; }
         public string HospitalId { get; set; }
+        public Analyst Analyst { get; set; }
+        public string AssignedAnalyst { get; set; }
     }
 }
