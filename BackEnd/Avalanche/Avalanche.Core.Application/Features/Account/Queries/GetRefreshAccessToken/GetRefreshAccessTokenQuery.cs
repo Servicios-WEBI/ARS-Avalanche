@@ -1,6 +1,8 @@
 ﻿using Avalanche.Core.Application.Dtos.Account;
 using Avalanche.Core.Application.Interfaces.Services;
+using Avalanche.Core.Domain.Settings;
 using MediatR;
+using Microsoft.Extensions.Options;
 
 namespace Avalanche.Core.Application.Features.Account.Queries.GetRefreshAccessToken
 {
@@ -13,10 +15,12 @@ namespace Avalanche.Core.Application.Features.Account.Queries.GetRefreshAccessTo
 	{
 
 		private readonly IAccountService _accountService;
+        private readonly JWTSettings _jwtSettings;
 
-		public GetRefreshAccessTokenQueryHandler(IAccountService accountService)
+		public GetRefreshAccessTokenQueryHandler(IAccountService accountService, IOptions<JWTSettings> jwtSettings)
 		{
 			_accountService = accountService;
+			_jwtSettings = jwtSettings.Value;
 		}
 
 		public async Task<RefreshTokenResponse> Handle(GetRefreshAccessTokenQuery request, CancellationToken cancellationToken)
@@ -34,9 +38,10 @@ namespace Avalanche.Core.Application.Features.Account.Queries.GetRefreshAccessTo
 
 			var refresh = await _accountService.GenerateJWToken(result);
 			response.JWToken = refresh;
+            response.ExpiresIn = (_jwtSettings.DurationInMinutes * 60).ToString();
+            response.ExpiresAt = DateTime.Now.AddMinutes(_jwtSettings.DurationInMinutes);
 
-			return response;
+            return response;
 		}
-
 	}
 }
