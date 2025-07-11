@@ -140,6 +140,14 @@ namespace Avalanche.Infrastructure.Identity.Services
 
                 if (result.Succeeded)
                 {
+                    response.Id = user.Id;
+                    response.FirstName = user.FirstName;
+                    response.LastName = user.LastName;
+                    response.Email = user.Email;
+                    response.PhoneNumber = user.PhoneNumber;
+                    response.Address = user.Address;
+                    response.UrlImage = user.UrlImage;
+
                     await _userManager.AddToRoleAsync(user, role.ToString());
                     await _emailService.SendAsync(new EmailRequest()
                     {
