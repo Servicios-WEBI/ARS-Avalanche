@@ -28,11 +28,12 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
            Summary = "Obtener todas las autorizaciones",
            Description = "Nos permite obtener todas las autorizaciones disponibles en el sistema"
         )]
-        public async Task<IActionResult> GetAuthorizations()
+        public async Task<IActionResult> GetAuthorizations([FromHeader(Name = "analyst")] string? assignedAnalyst,
+            [FromQuery] string? status)
         {
             try
             {
-                var result = await Mediator.Send(new GetAllAuthorizationQuery());
+                var result = await Mediator.Send(new GetAllAuthorizationQuery() { AssignedAnalyst = assignedAnalyst, Status = status});
 
                 if (result.Authorizations.Count == 0)
                 {

@@ -126,5 +126,19 @@ namespace Avalanche.Infrastructure.Persistence.Repositories
 
             return await query.Where(predicate).ToListAsync();
         }
+
+        public async Task<List<Entity>> GetAllByPropertyWithIncludeAsync(Expression<Func<Entity, bool>> predicate,
+            List<Expression<Func<Entity, object>>> properties)
+        {
+            using var dbContext = _dbContextFactory.CreateDbContext();
+            var query = dbContext.Set<Entity>().AsQueryable();
+
+            foreach (var property in properties)
+            {
+                query = query.Include(property);
+            }
+
+            return await query.Where(predicate).ToListAsync();
+        }
     }
 }
