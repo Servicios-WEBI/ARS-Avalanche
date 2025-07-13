@@ -49,7 +49,7 @@ namespace Avalanche.Core.Application.Features.Client.Queries.GetByDocumentNumber
                     throw new Exception(ErrorMessages.NotFound);
                 }
 
-                var activo = await _statusRepository.GetByNameAsync("Activo");
+                var activo = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Active, Properties.Name);
 
                 Domain.Entities.Policy policy = new();
                 if(entity.Policies.Count != 0)

@@ -4,6 +4,5 @@ namespace Avalanche.Core.Application.Interfaces.Repositories
 {
     public interface IDocumentTypeRepository : IGenericRepository<DocumentType>
     {
-        Task<DocumentType> GetByNameAsync(string name);
     }
 }

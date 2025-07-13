@@ -4,6 +4,5 @@ namespace Avalanche.Core.Application.Interfaces.Repositories
 {
     public interface IAuthorizationTypeRepository : IGenericRepository<AuthorizationType>
     {
-        Task<AuthorizationType> GetByNameAsync(string name);
     }
 }

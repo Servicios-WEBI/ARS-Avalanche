@@ -72,7 +72,7 @@ namespace Avalanche.Core.Application.Features.Client.Command.Add
         {
             try
             {
-                var documentType = await _documentTypeRepository.GetByNameAsync(command.DocumentType.ToUpper());
+                var documentType = await _documentTypeRepository.GetByPropertyAsync(dt => dt.Name == command.DocumentType.ToUpper(), Properties.Name);
                 if (documentType == null)
                 {
                     throw new Exception($"No se encontró el tipo de documento: {command.DocumentType.ToUpper()}");
@@ -84,7 +84,7 @@ namespace Avalanche.Core.Application.Features.Client.Command.Add
                     throw new Exception("Ya existe un cliente con ese número de documento");
                 }
 
-                var status = await _statusRepository.GetByNameAsync("Activo");
+                var status = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Active, Properties.Name);
 
                 ClientDTO response = new();
                 var valueToAdd = _mapper.Map<Domain.Entities.Client>(command);
