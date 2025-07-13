@@ -27,6 +27,7 @@ namespace Avalanche.Core.Application.Features.Authorization.Queries.GetAll
                 var getAlls = await _authorizationRepository.GetAllWithIncludeAsync(new List<Expression<Func<Domain.Entities.Authorization, object>>>
                 {
                     m => m.Affiliate,
+                    m => m.Analyst,
                     m => m.AuthorizationType,
                     m => m.Hospital,
                     m => m.Policy,
@@ -45,6 +46,7 @@ namespace Avalanche.Core.Application.Features.Authorization.Queries.GetAll
                     AuthorizationType = a.AuthorizationType.Name,
                     Hospital = a.Hospital.Name,
                     Policy = a.Policy.Number,
+                    AssignedAnalyst = a.Analyst.FullName,
                     Status = a.Status.Name
                 }).ToList();
 

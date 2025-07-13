@@ -78,13 +78,13 @@ namespace Avalanche.Core.Application.Features.Affiliate.Command.Update
                 if (valueToUpdate == null)
                     throw new Exception(ErrorMessages.NotFound);
 
-                var documentType = await _documentTypeRepository.GetByNameAsync(command.DocumentType.ToUpper());
+                var documentType = await _documentTypeRepository.GetByPropertyAsync(dt => dt.Name == command.DocumentType.ToUpper(), Properties.Name);
                 if (documentType == null)
                 {
                     throw new Exception($"No se encontró el tipo de documento: {command.DocumentType.ToUpper()}");
                 }
-                var status = await _statusRepository.GetByNameAsync(command.Status);
-                if (documentType == null)
+                var status = await _statusRepository.GetByPropertyAsync(s => s.Name == command.Status, Properties.Name);
+                if (status == null)
                 {
                     throw new Exception($"No se encontró el estado: {command.Status}");
                 }

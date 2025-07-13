@@ -13,6 +13,9 @@ namespace Avalanche.Core.Application.Interfaces.Repositories
 		Task<Entity> GetByIdAsync(string id);
 		Task<List<Entity>> GetAllWithIncludeAsync(List<Expression<Func<Entity, object>>> properties);
 		Task<Entity> GetByIdWithIncludeAsync(Expression<Func<Entity, bool>> predicate, List<Expression<Func<Entity, object>>> properties);
+		Task<Entity> GetByPropertyAsync(Expression<Func<Entity, bool>> predicate, string propertyPredicate);
+		Task<Entity> GetByPropertyWithIncludeAsync(Expression<Func<Entity, bool>> predicate, string propertyPredicate, 
+			List<Expression<Func<Entity, object>>> properties);
 
     }
 }

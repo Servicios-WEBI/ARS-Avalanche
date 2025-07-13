@@ -4,6 +4,5 @@ namespace Avalanche.Core.Application.Interfaces.Repositories
 {
     public interface ICoverageRepository : IGenericRepository<Coverage>
     {
-        Task<Coverage> GetByNameAsync(string name);
     }
 }

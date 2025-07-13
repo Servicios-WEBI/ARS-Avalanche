@@ -4,6 +4,5 @@ namespace Avalanche.Core.Application.Interfaces.Repositories
 {
     public interface IInstitutionTypeRepository : IGenericRepository<InstitutionType>
     {
-        Task<InstitutionType> GetByNameAsync(string name);
     }
 }

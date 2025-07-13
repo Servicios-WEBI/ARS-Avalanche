@@ -13,12 +13,5 @@ namespace Avalanche.Infrastructure.Persistence.Repositories
         {
             _dbContext = dbContext;
         }
-
-        public async Task<AuthorizationType> GetByNameAsync(string name)
-        {
-            using var dbContext = _dbContext.CreateDbContext();
-            return await dbContext.Set<AuthorizationType>()
-                .Where(x => x.Name == name).FirstOrDefaultAsync();
-        }
     }
 }

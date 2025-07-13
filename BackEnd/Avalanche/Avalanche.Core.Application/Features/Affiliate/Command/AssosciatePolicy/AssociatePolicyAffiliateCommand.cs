@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Avalanche.Core.Application.Constants;
 using Avalanche.Core.Application.Dtos.Affiliate;
 using Avalanche.Core.Application.Dtos.Common;
 using Avalanche.Core.Application.Interfaces.Repositories;
@@ -40,7 +41,7 @@ namespace Avalanche.Core.Application.Features.Affiliate.Command.AssosciatePolicy
             try
             {
 
-                var status = await _statusRepository.GetByNameAsync("Activo");
+                var status = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Active, Properties.Name);
 
                 AffiliatePolicyDTO response = new();
                 var valueToAdd = _mapper.Map<AffiliatePolicy>(command);

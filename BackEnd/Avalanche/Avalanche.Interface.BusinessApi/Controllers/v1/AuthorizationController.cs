@@ -5,6 +5,7 @@ using Avalanche.Core.Application.Features.Authorization.Command.Add;
 using Avalanche.Core.Application.Features.Authorization.Command.Delete;
 using Avalanche.Core.Application.Features.Authorization.Command.Update;
 using Avalanche.Core.Application.Features.Authorization.Queries.GetAll;
+using Avalanche.Core.Application.Features.Authorization.Queries.GetById;
 using Avalanche.Core.Application.Helpers;
 using Avalanche.Interface.BusinessAPI.Controllers;
 using Microsoft.AspNetCore.Authorization;
@@ -17,7 +18,7 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
     [SwaggerTag("Manejo de autorizaciones")]
     public class AuthorizationController : BaseApiController
     {
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator, Analyst")]
         [HttpGet()]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetAllAuthorizationQueryResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDTO))]
@@ -46,7 +47,35 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
 
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator, Analyst")]
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetByIdAuthorizationQueryResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDTO))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDTO))]
+        [SwaggerOperation(
+            Summary = "Obtener detalles de la autorización",
+            Description = "Nos permite obtener todos los detalles del autorización"
+         )]
+        public async Task<IActionResult> GetAuthorization([FromRoute] string id)
+        {
+            try
+            {
+                var result = await Mediator.Send(new GetByIdAuthorizationQuery() { Id = id });
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                if (e.Message == ErrorMessages.NotFound)
+                    return NotFound(ErrorMapperHelper.Error(ErrorMessages.NotFound, "No existe una autorización con ese número"));
+
+                return StatusCode(StatusCodes.Status500InternalServerError, ErrorMapperHelper.Error(ErrorMessages.InternalServer, e.Message));
+            }
+
+        }
+
+        [Authorize(Roles = "Administrator, Analyst")]
         [HttpPost()]
         [SwaggerOperation(
            Summary = "Crear una autorización",
@@ -84,7 +113,7 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
             }
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator, Analyst")]
         [HttpPut()]
         [SwaggerOperation(
            Summary = "Editar una autorización",
