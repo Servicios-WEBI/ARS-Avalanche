@@ -4,5 +4,6 @@
     {
         public const string DocumentNumber = "DocumentNumber";
         public const string Name = "Name";
+        public const string PlanId = "PlanId";
     }
 }
