@@ -15,6 +15,7 @@ namespace Avalanche.Core.Application
 
             #region Services
             services.AddScoped<IPlanCoverageComparisonService, PlanCoverageComparisonService>();
+            services.AddScoped<IAffiliateValidationService, AffiliateValidationService>();
             #endregion
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Avalanche.Core.Application.Interfaces.Repositories;
+using Avalanche.Core.Domain.Entities;
 using Avalanche.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -87,8 +88,27 @@ namespace Avalanche.Infrastructure.Persistence.Repositories
                 query = query.Include(property);
             }
 
-            var entityType = typeof(Entity);
-            var idProperty = entityType.GetProperty("Id");
+            return await query.FirstOrDefaultAsync(predicate);
+        }
+
+        public async Task<Entity> GetByPropertyAsync(Expression<Func<Entity, bool>> predicate, string propertyPredicate)
+        {
+            using var dbContext = _dbContextFactory.CreateDbContext();
+            var query = dbContext.Set<Entity>().AsQueryable();
+
+            return await query.FirstOrDefaultAsync(predicate);
+        }
+
+        public async Task<Entity> GetByPropertyWithIncludeAsync(Expression<Func<Entity, bool>> predicate, string propertyPredicate,
+            List<Expression<Func<Entity, object>>> properties)
+        {
+            using var dbContext = _dbContextFactory.CreateDbContext();
+            var query = dbContext.Set<Entity>().AsQueryable();
+
+            foreach (var property in properties)
+            {
+                query = query.Include(property);
+            }
 
             return await query.FirstOrDefaultAsync(predicate);
         }

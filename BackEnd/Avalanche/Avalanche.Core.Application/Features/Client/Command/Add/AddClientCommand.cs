@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
+using Avalanche.Core.Application.Constants;
 using Avalanche.Core.Application.Dtos.Client;
 using Avalanche.Core.Application.Dtos.Common;
 using Avalanche.Core.Application.Interfaces.Repositories;
 using MediatR;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
 
 namespace Avalanche.Core.Application.Features.Client.Command.Add
 {
@@ -78,7 +78,7 @@ namespace Avalanche.Core.Application.Features.Client.Command.Add
                     throw new Exception($"No se encontró el tipo de documento: {command.DocumentType.ToUpper()}");
                 }
 
-                var client = await _clientRepository.GetByDocumentNumberAsync(a => a.DocumentNumber == command.DocumentNumber, new List<Expression<Func<Domain.Entities.Client, object>>> { });
+                var client = await _clientRepository.GetByPropertyAsync(a => a.DocumentNumber == command.DocumentNumber, Properties.DocumentNumber);
                 if (client != null)
                 {
                     throw new Exception("Ya existe un cliente con ese número de documento");

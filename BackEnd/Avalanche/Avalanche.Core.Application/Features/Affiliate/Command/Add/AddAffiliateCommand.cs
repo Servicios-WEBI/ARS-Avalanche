@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using Avalanche.Core.Application.Dtos.Common;
+using Avalanche.Core.Application.Constants;
 using Avalanche.Core.Application.Dtos.Affiliate;
+using Avalanche.Core.Application.Dtos.Common;
 using Avalanche.Core.Application.Interfaces.Repositories;
 using MediatR;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
 
 namespace Avalanche.Core.Application.Features.Affiliate.Command.Add
 {
@@ -70,7 +70,7 @@ namespace Avalanche.Core.Application.Features.Affiliate.Command.Add
                     throw new Exception($"No se encontró el tipo de documento: {command.DocumentType.ToUpper()}");
                 }
 
-                var affiliate = await _affilliateRepository.GetByDocumentNumberAsync(a => a.DocumentNumber == command.DocumentNumber, new List<Expression<Func<Domain.Entities.Affiliate, object>>>{});
+                var affiliate = await _affilliateRepository.GetByPropertyAsync(a => a.DocumentNumber == command.DocumentNumber, Properties.DocumentNumber);
                 if (affiliate != null)
                 {
                     throw new Exception("Ya existe un afiliado con ese número de documento");

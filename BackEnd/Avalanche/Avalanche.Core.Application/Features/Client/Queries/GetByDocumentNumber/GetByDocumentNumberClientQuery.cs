@@ -35,7 +35,8 @@ namespace Avalanche.Core.Application.Features.Client.Queries.GetByDocumentNumber
             {
                 GetByDocumentNumberClientQueryResponse result = new();
 
-                var entity = await _clientRepository.GetByDocumentNumberAsync(t => t.DocumentNumber == query.DocumentNumber, new List<Expression<Func<Domain.Entities.Client, object>>>
+                var entity = await _clientRepository.GetByPropertyWithIncludeAsync(t => t.DocumentNumber == query.DocumentNumber, Properties.DocumentNumber,
+                    new List<Expression<Func<Domain.Entities.Client, object>>>
                 {
                     m => m.DocumentType,
                     m => m.Policies,
