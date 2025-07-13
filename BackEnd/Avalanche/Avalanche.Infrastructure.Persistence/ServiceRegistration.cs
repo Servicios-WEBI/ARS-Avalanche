@@ -43,6 +43,7 @@ namespace Avalanche.Infrastructure.Persistence
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddTransient<IAffiliatePolicyRepository, AffiliatePolicyRepository>();
             services.AddTransient<IAffiliateRepository, AffiliateRepository>();
+            services.AddTransient<IAnalystRepository, AnalystRepository>();
             services.AddTransient<IAuthorizationRepository, AuthorizationRepository>();
             services.AddTransient<IAuthorizationTypeRepository, AuthorizationTypeRepository>();
             services.AddTransient<IClientRepository, ClientRepository>();

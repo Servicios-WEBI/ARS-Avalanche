@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Avalanche.Core.Application.Constants;
 using Avalanche.Core.Application.Dtos.Common;
 using Avalanche.Core.Application.Dtos.Policy;
 using Avalanche.Core.Application.Interfaces.Repositories;
@@ -55,7 +56,7 @@ namespace Avalanche.Core.Application.Features.Policy.Command.Add
                     throw new Exception("Ese cliente no existe en el sistema");
                 }
 
-                var status = await _statusRepository.GetByNameAsync("Activo");
+                var status = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Active, Properties.Name);
                 
                 //Generando numero de poliza
                 string baseString = Guid.NewGuid().ToString();

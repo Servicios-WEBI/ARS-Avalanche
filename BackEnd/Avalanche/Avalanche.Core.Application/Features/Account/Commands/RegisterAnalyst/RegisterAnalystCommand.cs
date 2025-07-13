@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Avalanche.Core.Application.Dtos.Account;
 using Avalanche.Core.Application.Helpers;
+using Avalanche.Core.Application.Interfaces.Repositories;
 using Avalanche.Core.Application.Interfaces.Services;
+using Avalanche.Core.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Swashbuckle.AspNetCore.Annotations;
@@ -43,11 +45,13 @@ namespace Avalanche.Core.Application.Features.Account.Commands.RegisterAnalyst
     public class RegisterAnalystCommandHandler : IRequestHandler<RegisterAnalystCommand, RegisterResponse>
     {
         private readonly IAccountService _accountService;
+        private readonly IAnalystRepository _analystRepository;
         private readonly IMapper _mapper;
 
-        public RegisterAnalystCommandHandler(IAccountService accountService, IMapper mapper)
+        public RegisterAnalystCommandHandler(IAccountService accountService, IAnalystRepository analystRepository, IMapper mapper)
         {
             _accountService = accountService;
+            _analystRepository = analystRepository;
             _mapper = mapper;
         }
 
@@ -68,6 +72,23 @@ namespace Avalanche.Core.Application.Features.Account.Commands.RegisterAnalyst
                 request.Password = "ARS@" + Guid.NewGuid().ToString().Substring(0,8);
                 
                 var response = await _accountService.RegisterUserAsync(request, Enums.Roles.Analyst);
+
+                try
+                {
+                    Analyst analyst = new()
+                    {
+                        Id = response.Id,
+                        FullName = response.FirstName + " " + response.LastName,
+                        Email = response.Email,
+                        IsActive = true
+                    };
+
+                    await _analystRepository.AddAsync(analyst);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Hubo un error creando el analista");
+                }
 
                 if (response.Status == "Fallido")
 				{

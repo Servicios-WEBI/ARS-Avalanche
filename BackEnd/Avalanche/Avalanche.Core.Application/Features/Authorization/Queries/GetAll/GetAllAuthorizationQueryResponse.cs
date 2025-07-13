@@ -34,6 +34,9 @@ namespace Avalanche.Core.Application.Features.Authorization.Queries.GetAll
         [SwaggerSchema(Description = "Póliza")]
         public string Policy { get; set; }
 
+        [SwaggerSchema(Description = "Analista asignado")]
+        public string AssignedAnalyst { get; set; }
+
         [SwaggerSchema(Description = "Hospital donde se realiza la solicitud")]
         public string Hospital { get; set; }
     }

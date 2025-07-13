@@ -1,6 +1,7 @@
 ﻿using Avalanche.Core.Application.Constants;
 using Avalanche.Core.Application.Dtos.Common;
 using Avalanche.Core.Application.Dtos.HospitalIntegration;
+using Avalanche.Core.Application.Features.HospitalIntegration.Command.MakeAuthorization;
 using Avalanche.Core.Application.Features.HospitalIntegration.Command.PayBills;
 using Avalanche.Core.Application.Features.HospitalIntegration.Queries.CheckAuthorization;
 using Avalanche.Core.Application.Features.HospitalIntegration.Queries.ValidateAffiliate;
@@ -121,6 +122,55 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
                 {
                     return NotFound(result);
                 }
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ErrorMapperHelper.Error(ErrorMessages.InternalServer, e.Message));
+            }
+        }
+
+        [Authorize(Roles = "Guest")]
+        [HttpPost("make-authorization")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorizationResponseDTO))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(AuthorizationResponseDTO))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(AuthorizationResponseDTO))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDTO))]
+        [SwaggerOperation(
+           Summary = "Registro de solicitud",
+           Description = "Permite a los hospitales realizar solicitudes"
+        )]
+        public async Task<IActionResult> PayBills([FromBody] MakeAuthorizationCommand command)
+        {
+            try
+            {
+                if (command == null)
+                {
+                    return BadRequest(ErrorMapperHelper.Error(ErrorMessages.BadRequest, "El cuerpo de la solicitud no puede estar vacío o tiene errores de formato."));
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList<string>();
+
+                    return BadRequest(ErrorMapperHelper.ListError(errors));
+                }
+
+                var result = await Mediator.Send(command);
+
+                if (result.Status == "Fallido")
+                {
+                    return NotFound(result);
+                }
+                else if(result.Status != "Exitoso")
+                {
+                    return BadRequest(result);
+                }
+
                 return Ok(result);
             }
             catch (Exception e)
