@@ -48,7 +48,7 @@ namespace Avalanche.Core.Application.Features.Client.Queries.GetById
                     throw new Exception(ErrorMessages.NotFound);
                 }
 
-                var activo = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Active, Properties.Name);
+                var activo = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Active);
 
                 Domain.Entities.Policy policy = new();
                 if (entity.Policies.Count != 0)

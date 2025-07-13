@@ -2,20 +2,19 @@
 
 namespace Avalanche.Core.Application.Interfaces.Repositories
 {
-    public interface IGenericRepository<Entity> where Entity : class
+	public interface IGenericRepository<Entity> where Entity : class
 	{
 		Task<Entity> AddAsync(Entity entity);
 		Task<List<Entity>> AddManyAsync(List<Entity> entities);
-        Task UpdateAsync(Entity entity, string id);
+		Task UpdateAsync(Entity entity, string id);
 		Task DeleteAsync(Entity entity);
 		Task DeleteManyAsync(List<Entity> entities);
-        Task<List<Entity>> GetAllAsync();
+		Task<List<Entity>> GetAllAsync();
 		Task<Entity> GetByIdAsync(string id);
 		Task<List<Entity>> GetAllWithIncludeAsync(List<Expression<Func<Entity, object>>> properties);
 		Task<Entity> GetByIdWithIncludeAsync(Expression<Func<Entity, bool>> predicate, List<Expression<Func<Entity, object>>> properties);
-		Task<Entity> GetByPropertyAsync(Expression<Func<Entity, bool>> predicate, string propertyPredicate);
-		Task<Entity> GetByPropertyWithIncludeAsync(Expression<Func<Entity, bool>> predicate, string propertyPredicate, 
+		Task<Entity> GetByPropertyAsync(Expression<Func<Entity, bool>> predicate);
+		Task<Entity> GetByPropertyWithIncludeAsync(Expression<Func<Entity, bool>> predicate,
 			List<Expression<Func<Entity, object>>> properties);
-
-    }
+	}
 }

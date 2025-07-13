@@ -25,7 +25,7 @@ namespace Avalanche.Core.Application.Services
         {
             AffiliateValidationResult result = new();
 
-            var entity = await _affiliateRepository.GetByPropertyWithIncludeAsync(t => t.DocumentNumber == documentNumber, Properties.DocumentNumber,
+            var entity = await _affiliateRepository.GetByPropertyWithIncludeAsync(t => t.DocumentNumber == documentNumber,
                 new List<Expression<Func<Domain.Entities.Affiliate, object>>>
                 {
                     m => m.AffiliatePolicies,

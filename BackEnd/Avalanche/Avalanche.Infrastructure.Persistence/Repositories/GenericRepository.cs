@@ -1,5 +1,4 @@
 ﻿using Avalanche.Core.Application.Interfaces.Repositories;
-using Avalanche.Core.Domain.Entities;
 using Avalanche.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -7,21 +6,21 @@ using System.Linq.Expressions;
 namespace Avalanche.Infrastructure.Persistence.Repositories
 {
     public class GenericRepository<Entity> : IGenericRepository<Entity> where Entity : class
-	{
-		private readonly IDbContextFactory<ApplicationContext> _dbContextFactory;
+    {
+        private readonly IDbContextFactory<ApplicationContext> _dbContextFactory;
 
-		public GenericRepository(IDbContextFactory<ApplicationContext> dbContextFactory)
-		{
-			_dbContextFactory = dbContextFactory;
-		}
+        public GenericRepository(IDbContextFactory<ApplicationContext> dbContextFactory)
+        {
+            _dbContextFactory = dbContextFactory;
+        }
 
-		public virtual async Task<Entity> AddAsync(Entity entity)
-		{
+        public virtual async Task<Entity> AddAsync(Entity entity)
+        {
             using var dbContext = _dbContextFactory.CreateDbContext();
             await dbContext.Set<Entity>().AddAsync(entity);
-			await dbContext.SaveChangesAsync();
-			return entity;
-		}
+            await dbContext.SaveChangesAsync();
+            return entity;
+        }
 
         public virtual async Task<List<Entity>> AddManyAsync(List<Entity> entities)
         {
@@ -32,19 +31,19 @@ namespace Avalanche.Infrastructure.Persistence.Repositories
         }
 
         public virtual async Task UpdateAsync(Entity entity, string id)
-		{
+        {
             using var dbContext = _dbContextFactory.CreateDbContext();
             var entry = await dbContext.Set<Entity>().FindAsync(id);
-			dbContext.Entry(entry).CurrentValues.SetValues(entity);
-			await dbContext.SaveChangesAsync();
-		}
+            dbContext.Entry(entry).CurrentValues.SetValues(entity);
+            await dbContext.SaveChangesAsync();
+        }
 
-		public virtual async Task DeleteAsync(Entity entity)
-		{
+        public virtual async Task DeleteAsync(Entity entity)
+        {
             using var dbContext = _dbContextFactory.CreateDbContext();
             dbContext.Set<Entity>().Remove(entity);
-			await dbContext.SaveChangesAsync();
-		}
+            await dbContext.SaveChangesAsync();
+        }
 
         public virtual async Task DeleteManyAsync(List<Entity> entities)
         {
@@ -54,29 +53,29 @@ namespace Avalanche.Infrastructure.Persistence.Repositories
         }
 
         public virtual async Task<List<Entity>> GetAllAsync()
-		{
+        {
             using var dbContext = _dbContextFactory.CreateDbContext();
             return await dbContext.Set<Entity>().ToListAsync();//Deferred execution
-		}
+        }
 
-		public virtual async Task<List<Entity>> GetAllWithIncludeAsync(List<Expression<Func<Entity, object>>> properties)
-		{
+        public virtual async Task<List<Entity>> GetAllWithIncludeAsync(List<Expression<Func<Entity, object>>> properties)
+        {
             using var dbContext = _dbContextFactory.CreateDbContext();
             var query = dbContext.Set<Entity>().AsQueryable();
 
-			foreach (var property in properties)
-			{
-				query = query.Include(property);
-			}
+            foreach (var property in properties)
+            {
+                query = query.Include(property);
+            }
 
-			return await query.ToListAsync();
-		}
+            return await query.ToListAsync();
+        }
 
-		public virtual async Task<Entity> GetByIdAsync(string id)
-		{
+        public virtual async Task<Entity> GetByIdAsync(string id)
+        {
             using var dbContext = _dbContextFactory.CreateDbContext();
             return await dbContext.Set<Entity>().FindAsync(id);
-		}
+        }
 
         public virtual async Task<Entity> GetByIdWithIncludeAsync(Expression<Func<Entity, bool>> predicate, List<Expression<Func<Entity, object>>> properties)
         {
@@ -91,7 +90,7 @@ namespace Avalanche.Infrastructure.Persistence.Repositories
             return await query.FirstOrDefaultAsync(predicate);
         }
 
-        public async Task<Entity> GetByPropertyAsync(Expression<Func<Entity, bool>> predicate, string propertyPredicate)
+        public async Task<Entity> GetByPropertyAsync(Expression<Func<Entity, bool>> predicate)
         {
             using var dbContext = _dbContextFactory.CreateDbContext();
             var query = dbContext.Set<Entity>().AsQueryable();
@@ -99,7 +98,7 @@ namespace Avalanche.Infrastructure.Persistence.Repositories
             return await query.FirstOrDefaultAsync(predicate);
         }
 
-        public async Task<Entity> GetByPropertyWithIncludeAsync(Expression<Func<Entity, bool>> predicate, string propertyPredicate,
+        public async Task<Entity> GetByPropertyWithIncludeAsync(Expression<Func<Entity, bool>> predicate,
             List<Expression<Func<Entity, object>>> properties)
         {
             using var dbContext = _dbContextFactory.CreateDbContext();
@@ -111,6 +110,5 @@ namespace Avalanche.Infrastructure.Persistence.Repositories
             }
 
             return await query.FirstOrDefaultAsync(predicate);
-        }
-    }
+        }    }
 }

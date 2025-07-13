@@ -66,7 +66,7 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Command.MakeAu
             {
                 AuthorizationResponseDTO response = new();
 
-                var hospital = await _hospitalRepository.GetByPropertyAsync(h => h.Name == command.Hospital.ToUpper(), Properties.Name);
+                var hospital = await _hospitalRepository.GetByPropertyAsync(h => h.Name == command.Hospital.ToUpper());
 
                 if (hospital == null)
                 {
@@ -75,7 +75,7 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Command.MakeAu
                     return response;
                 }
 
-                var type = await _authorizationTypeRepository.GetByPropertyAsync(a => a.Name == command.AuthorizationType.ToUpper(), Properties.Name);
+                var type = await _authorizationTypeRepository.GetByPropertyAsync(a => a.Name == command.AuthorizationType.ToUpper());
 
                 if (type == null)
                 {
@@ -93,7 +93,7 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Command.MakeAu
                     return response;
                 }
 
-                var pending = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Pending, Properties.Name);
+                var pending = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Pending);
 
                 var analyst = await _analystRepository.GetAnalystWithLeastWorkloadAsync(pending.Id);
 
@@ -130,7 +130,7 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Command.MakeAu
                 
                 if(coverage.AmountLimit == 0 && coverage.YearFrequencyLimit == 0 && coverage.CoveragePercentage == 100)
                 {
-                    var approved = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Approved, Properties.Name);
+                    var approved = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Approved);
                     authorizationToAdd.StatusId = approved.Id;
                     authorizationToAdd.ApprovedAmount = command.ApplicationAmount;
                     response.AuthorizationStatus = "Aprobada";

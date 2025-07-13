@@ -48,7 +48,7 @@ namespace Avalanche.Core.Application.Features.Policy.Queries.GetById
                     throw new Exception(ErrorMessages.NotFound);
                 }
 
-                var activo = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Active, Properties.Name);
+                var activo = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Active);
 
                 List<AffiliatesResponseDTO> affiliates = new();
                 foreach (var item in entity.AffiliatePolicies.Where(a => !a.IsPrincipal && a.StatusId == activo.Id).ToList())
