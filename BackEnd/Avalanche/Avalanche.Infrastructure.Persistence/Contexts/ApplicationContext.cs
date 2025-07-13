@@ -266,7 +266,7 @@ namespace Avalanche.Infrastructure.Persistence.Contexts
             #region Property configurations
             modelBuilder.Entity<Affiliate>().HasIndex(x => x.DocumentNumber).IsUnique();
 
-            modelBuilder.Entity<Authorization>().HasIndex(x => x.AssignedAnalyst).IsUnique();
+            modelBuilder.Entity<Authorization>().HasIndex(x => x.AssignedAnalyst);
 
             modelBuilder.Entity<Client>().HasIndex(x => x.DocumentNumber).IsUnique();
 
