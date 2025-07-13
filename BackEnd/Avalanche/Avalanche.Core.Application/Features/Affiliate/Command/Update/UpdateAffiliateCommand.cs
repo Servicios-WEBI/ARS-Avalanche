@@ -53,15 +53,17 @@ namespace Avalanche.Core.Application.Features.Affiliate.Command.Update
 
     public class UpdateAffiliateCommandHandler : IRequestHandler<UpdateAffiliateCommand, AffiliateDTO>
     {
-        private readonly IAffiliateRepository _affilliateRepository;
+        private readonly IAffiliateRepository _affiliateRepository;
+        private readonly IAffiliatePolicyRepository _affiliatePolicyRepository;
         private readonly IDocumentTypeRepository _documentTypeRepository;
         private readonly IStatusRepository _statusRepository;
         private readonly IMapper _mapper;
 
-        public UpdateAffiliateCommandHandler(IAffiliateRepository affilliateRepository, IDocumentTypeRepository documentTypeRepository,
-            IStatusRepository statusRepository, IMapper mapper)
+        public UpdateAffiliateCommandHandler(IAffiliateRepository affiliateRepository, IAffiliatePolicyRepository affiliatePolicyRepository,
+            IDocumentTypeRepository documentTypeRepository, IStatusRepository statusRepository, IMapper mapper)
         {
-            _affilliateRepository = affilliateRepository;
+            _affiliateRepository = affiliateRepository;
+            _affiliatePolicyRepository = affiliatePolicyRepository;
             _documentTypeRepository = documentTypeRepository;
             _statusRepository = statusRepository;
             _mapper = mapper;
@@ -73,20 +75,37 @@ namespace Avalanche.Core.Application.Features.Affiliate.Command.Update
             {
                 AffiliateDTO response = new();
 
-                var valueToUpdate = await _affilliateRepository.GetByIdAsync(command.Id);
+                var valueToUpdate = await _affiliateRepository.GetByIdAsync(command.Id);
 
                 if (valueToUpdate == null)
                     throw new Exception(ErrorMessages.NotFound);
 
-                var documentType = await _documentTypeRepository.GetByPropertyAsync(dt => dt.Name == command.DocumentType.ToUpper(), Properties.Name);
+                var documentType = await _documentTypeRepository.GetByPropertyAsync(dt => dt.Name == command.DocumentType.ToUpper());
                 if (documentType == null)
                 {
                     throw new Exception($"No se encontró el tipo de documento: {command.DocumentType.ToUpper()}");
                 }
-                var status = await _statusRepository.GetByPropertyAsync(s => s.Name == command.Status, Properties.Name);
+                var status = await _statusRepository.GetByPropertyAsync(s => s.Name == command.Status);
                 if (status == null)
                 {
                     throw new Exception($"No se encontró el estado: {command.Status}");
+                }
+
+                /*Pedazo de código para actualizar el estado en la entidad AffiliatePolicy en caso de haber realizado
+                 una actualización para mantener la integridad*/
+                if (valueToUpdate.StatusId != status.Id)
+                {
+                    try
+                    {
+                        var affiliatePolicy = await _affiliatePolicyRepository.GetByPropertyAsync(a => a.AffiliateId == valueToUpdate.Id);
+                        affiliatePolicy.StatusId = status.Id;
+
+                        await _affiliatePolicyRepository.UpdateAsync(affiliatePolicy, affiliatePolicy.Id);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("Hubo un error al actualizar los datos del afiliado");
+                    }
                 }
 
                 valueToUpdate.FirstName = command.FirstName;
@@ -99,7 +118,7 @@ namespace Avalanche.Core.Application.Features.Affiliate.Command.Update
                 valueToUpdate.StatusId = status.Id;
                 valueToUpdate.ClientId = command.ClientId;
 
-                await _affilliateRepository.UpdateAsync(valueToUpdate, valueToUpdate.Id);
+                await _affiliateRepository.UpdateAsync(valueToUpdate, valueToUpdate.Id);
 
                 response = _mapper.Map<AffiliateDTO>(valueToUpdate);
                 response.DocumentType = command.DocumentType;

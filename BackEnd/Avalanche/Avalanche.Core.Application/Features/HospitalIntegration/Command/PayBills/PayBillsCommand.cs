@@ -38,7 +38,7 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Command.PayBil
             {
                 PayBillResponseDTO response = new();
                 response.Bills = new();
-                var hospital = await _hospitalRepository.GetByPropertyAsync(h => h.Name == command.Hospital.ToUpper(), Properties.Name);
+                var hospital = await _hospitalRepository.GetByPropertyAsync(h => h.Name == command.Hospital.ToUpper());
 
                 if(hospital == null)
                 {

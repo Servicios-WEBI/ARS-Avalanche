@@ -48,10 +48,10 @@ namespace Avalanche.Core.Application.Features.Policy.Queries.GetByNumber
                     throw new Exception(ErrorMessages.NotFound);
                 }
 
-                var activo = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Active, Properties.Name);
+                var active = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Active);
 
                 List<AffiliatesResponseDTO> affiliates = new();
-                foreach (var item in entity.AffiliatePolicies.Where(a => !a.IsPrincipal && a.StatusId == activo.Id).ToList())
+                foreach (var item in entity.AffiliatePolicies.Where(a => !a.IsPrincipal && a.StatusId == active.Id).ToList())
                 {
                     var affiliate = await _affiliateRepository.GetByIdWithIncludeAsync(a => a.Id == item.AffiliateId, new List<Expression<Func<Domain.Entities.Affiliate, object>>>
                     {

@@ -56,7 +56,7 @@ namespace Avalanche.Core.Application.Features.Policy.Command.Add
                     throw new Exception("Ese cliente no existe en el sistema");
                 }
 
-                var status = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Active, Properties.Name);
+                var status = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Active);
                 
                 //Generando numero de poliza
                 string baseString = Guid.NewGuid().ToString();

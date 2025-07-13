@@ -41,7 +41,7 @@ namespace Avalanche.Core.Application.Features.Affiliate.Command.AssosciatePolicy
             try
             {
 
-                var status = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Active, Properties.Name);
+                var status = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Active);
 
                 AffiliatePolicyDTO response = new();
                 var valueToAdd = _mapper.Map<AffiliatePolicy>(command);
