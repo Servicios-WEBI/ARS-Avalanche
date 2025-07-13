@@ -49,10 +49,10 @@ namespace Avalanche.Core.Application.Features.Client.Queries.GetByDocumentNumber
                     throw new Exception(ErrorMessages.NotFound);
                 }
 
-                var activo = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Active);
+                var active = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Active);
 
                 Domain.Entities.Policy policy = new();
-                if(entity.Policies.Count != 0)
+                if (entity.Policies.Count != 0)
                 {
                     policy = await _policyRepository.GetByIdWithIncludeAsync(t => t.Id == entity.Policies[0].Id, new List<Expression<Func<Domain.Entities.Policy, object>>>
                     {
@@ -60,8 +60,8 @@ namespace Avalanche.Core.Application.Features.Client.Queries.GetByDocumentNumber
                         m => m.Status
                     });
                 }
-                
-                var affiliates = entity.Affiliates.Where(x => (x.DocumentNumber != entity.DocumentNumber) && (x.StatusId == activo.Id)).Select(a => new AffiliatesResponseDTO
+
+                var affiliates = entity.Affiliates.Where(x => (x.DocumentNumber != entity.DocumentNumber) && (x.StatusId == active.Id)).Select(a => new AffiliatesResponseDTO
                 {
                     AffiliateId = a.Id,
                     AffiliateName = a.FirstName + " " + a.LastName,
