@@ -32,7 +32,7 @@ namespace Avalanche.Core.Application.Features.Affiliate.Queries.GetByDocumentNum
             {
                 GetByDocumentNumberAffiliateQueryResponse result = new();
 
-                var entity = await _affilliateRepository.GetByPropertyWithIncludeAsync(t => t.DocumentNumber == query.DocumentNumber, Properties.DocumentNumber,
+                var entity = await _affilliateRepository.GetByPropertyWithIncludeAsync(t => t.DocumentNumber == query.DocumentNumber,
                     new List<Expression<Func<Domain.Entities.Affiliate, object>>>
                 {
                     m => m.DocumentType,

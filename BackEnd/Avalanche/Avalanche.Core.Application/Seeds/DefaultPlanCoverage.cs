@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using Avalanche.Core.Application.Constants;
-using Avalanche.Core.Application.Dtos.PlanCoverage;
+﻿using Avalanche.Core.Application.Dtos.PlanCoverage;
 using Avalanche.Core.Application.Interfaces.Repositories;
 using Avalanche.Core.Domain.Entities;
 using CsvHelper;
@@ -27,8 +25,8 @@ namespace Avalanche.Core.Application.Seeds
                     foreach (var item in records)
                     {
                         PlanCoverage planCoverage = new();
-                        var plan = await planRepository.GetByPropertyAsync(p => p.Name == item.PlanName, Properties.Name);
-                        var coverage = await coverageRepository.GetByPropertyAsync(h => h.Name == item.CoverageName, Properties.Name);
+                        var plan = await planRepository.GetByPropertyAsync(p => p.Name == item.PlanName);
+                        var coverage = await coverageRepository.GetByPropertyAsync(h => h.Name == item.CoverageName);
 
                         planCoverage.Id = Guid.NewGuid().ToString().Substring(0, 12);
                         planCoverage.AmountLimit = item.AmountLimit;

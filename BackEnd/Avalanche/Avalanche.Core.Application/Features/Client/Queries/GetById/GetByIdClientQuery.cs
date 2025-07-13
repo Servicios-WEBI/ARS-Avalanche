@@ -48,7 +48,7 @@ namespace Avalanche.Core.Application.Features.Client.Queries.GetById
                     throw new Exception(ErrorMessages.NotFound);
                 }
 
-                var activo = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Active, Properties.Name);
+                var active = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Active);
 
                 Domain.Entities.Policy policy = new();
                 if (entity.Policies.Count != 0)
@@ -60,7 +60,7 @@ namespace Avalanche.Core.Application.Features.Client.Queries.GetById
                     });
                 }
 
-                var affiliates = entity.Affiliates.Where(x => (x.DocumentNumber != entity.DocumentNumber) && (x.StatusId == activo.Id)).Select(a => new AffiliatesResponseDTO
+                var affiliates = entity.Affiliates.Where(x => (x.DocumentNumber != entity.DocumentNumber) && (x.StatusId == active.Id)).Select(a => new AffiliatesResponseDTO
                 {
                     AffiliateId = a.Id,
                     AffiliateName = a.FirstName + " " + a.LastName,
