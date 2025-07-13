@@ -7,7 +7,8 @@ namespace Avalanche.Core.Application.Interfaces.Repositories
 		Task<Entity> AddAsync(Entity entity);
 		Task<List<Entity>> AddManyAsync(List<Entity> entities);
 		Task UpdateAsync(Entity entity, string id);
-		Task DeleteAsync(Entity entity);
+		Task UpdateManyAsync(List<Entity> entities);
+        Task DeleteAsync(Entity entity);
 		Task DeleteManyAsync(List<Entity> entities);
 		Task<List<Entity>> GetAllAsync();
 		Task<Entity> GetByIdAsync(string id);
@@ -16,5 +17,6 @@ namespace Avalanche.Core.Application.Interfaces.Repositories
 		Task<Entity> GetByPropertyAsync(Expression<Func<Entity, bool>> predicate);
 		Task<Entity> GetByPropertyWithIncludeAsync(Expression<Func<Entity, bool>> predicate,
 			List<Expression<Func<Entity, object>>> properties);
-	}
+		Task<List<Entity>> GetAllByPropertyAsync(Expression<Func<Entity, bool>> predicate);
+    }
 }

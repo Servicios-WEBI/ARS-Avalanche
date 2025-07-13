@@ -38,6 +38,13 @@ namespace Avalanche.Infrastructure.Persistence.Repositories
             await dbContext.SaveChangesAsync();
         }
 
+        public virtual async Task UpdateManyAsync(List<Entity> entities)
+        {
+            using var dbContext = _dbContextFactory.CreateDbContext();
+            dbContext.Set<Entity>().UpdateRange(entities);
+            await dbContext.SaveChangesAsync();
+        }
+
         public virtual async Task DeleteAsync(Entity entity)
         {
             using var dbContext = _dbContextFactory.CreateDbContext();
@@ -110,5 +117,14 @@ namespace Avalanche.Infrastructure.Persistence.Repositories
             }
 
             return await query.FirstOrDefaultAsync(predicate);
-        }    }
+        }
+
+        public async Task<List<Entity>> GetAllByPropertyAsync(Expression<Func<Entity, bool>> predicate)
+        {
+            using var dbContext = _dbContextFactory.CreateDbContext();
+            var query = dbContext.Set<Entity>().AsQueryable();
+
+            return await query.Where(predicate).ToListAsync();
+        }
+    }
 }

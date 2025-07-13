@@ -2,13 +2,10 @@
 using Avalanche.Core.Application.Constants;
 using Avalanche.Core.Application.Dtos.Common;
 using Avalanche.Core.Application.Dtos.Policy;
-using Avalanche.Core.Application.Helpers;
 using Avalanche.Core.Application.Interfaces.Repositories;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
 
 namespace Avalanche.Core.Application.Features.Policy.Command.Update
 {
@@ -33,12 +30,15 @@ namespace Avalanche.Core.Application.Features.Policy.Command.Update
     public class UpdatePolicyCommandHandler : IRequestHandler<UpdatePolicyCommand, PolicyDTO>
     {
         private readonly IPolicyRepository _policyRepository;
+        private readonly IAffiliatePolicyRepository _affiliatePolicyRepository;
         private readonly IStatusRepository _statusRepository;
         private readonly IMapper _mapper;
 
-        public UpdatePolicyCommandHandler(IPolicyRepository policyRepository, IStatusRepository statusRepository, IMapper mapper)
+        public UpdatePolicyCommandHandler(IPolicyRepository policyRepository, IStatusRepository statusRepository,
+            IAffiliatePolicyRepository affiliatePolicyRepository, IMapper mapper)
         {
             _policyRepository = policyRepository;
+            _affiliatePolicyRepository = affiliatePolicyRepository;
             _statusRepository = statusRepository;
             _mapper = mapper;
         }
@@ -55,6 +55,23 @@ namespace Avalanche.Core.Application.Features.Policy.Command.Update
                     throw new Exception(ErrorMessages.NotFound);
 
                 var status = await _statusRepository.GetByIdAsync(command.StatusId);
+
+                /*Pedazo de código para actualizar el estado en la entidad AffiliatePolicy en caso de haber realizado
+                 una actualización para mantener la integridad*/
+                if (valueToUpdate.StatusId != status.Id)
+                {
+                    try
+                    {
+                        var affiliatePolicies = await _affiliatePolicyRepository.GetAllByPropertyAsync(a => a.PolicyId == valueToUpdate.Id);
+                        affiliatePolicies.ForEach(a => a.StatusId = status.Id);
+
+                        await _affiliatePolicyRepository.UpdateManyAsync(affiliatePolicies);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("Hubo un error al actualizar los datos de la póliza");
+                    }
+                }
 
                 valueToUpdate.PlanId = command.PlanId;
                 valueToUpdate.StatusId = status.Id;
