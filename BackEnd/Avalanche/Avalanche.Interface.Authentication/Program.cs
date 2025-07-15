@@ -25,10 +25,13 @@ builder.Configuration.AddEnvironmentVariables();
 // Configure services
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllDomain",
+    options.AddPolicy("AllowSpecificDomain",
         builder =>
         {
-            builder.AllowAnyOrigin();
+            builder.WithOrigins("http://localhost:5173");
+            builder.AllowAnyMethod();
+            builder.AllowAnyHeader();
+            builder.AllowCredentials();
         });
 });
 
@@ -86,7 +89,7 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseCors("AllowAllDomain");
+app.UseCors("AllowSpecificDomain");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSwaggerExtension();
