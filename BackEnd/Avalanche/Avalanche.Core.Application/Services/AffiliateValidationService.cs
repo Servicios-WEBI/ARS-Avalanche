@@ -20,7 +20,7 @@ namespace Avalanche.Core.Application.Services
             _policyRepository = policyRepository;
         }
 
-        public async Task<AffiliateValidationResult> ValidateAsync(string documentType, string documentNumber,
+        public async Task<AffiliateValidationResult> ValidateAsync(string? documentType, string documentNumber,
             string? policyNumber,CancellationToken ct = default)
         {
             AffiliateValidationResult result = new();
@@ -33,11 +33,20 @@ namespace Avalanche.Core.Application.Services
                     m => m.Status
                 });
 
-            if (entity == null || entity.DocumentType.Name != documentType)
+            if (entity == null)
             {
                 result.Status = "Afiliado no encontrado";
-                result.Details = [new ErrorDetailsDTO() { Code = ErrorMessages.NotFound, Message = "No existe un afiliado con ese tipo y número de documento" }];
+                result.Details = [new ErrorDetailsDTO() { Code = ErrorMessages.NotFound, Message = "No existe un afiliado con ese número de documento" }];
                 return result;
+            }
+            else if (!string.IsNullOrWhiteSpace(documentType))
+            {
+                if (entity.DocumentType.Name != documentType)
+                {
+                    result.Status = "Afiliado no encontrado";
+                    result.Details = [new ErrorDetailsDTO() { Code = ErrorMessages.NotFound, Message = "No existe un afiliado con ese tipo y número de documento" }];
+                    return result;
+                }
             }
 
             if (entity.Status.Name != "Activo")

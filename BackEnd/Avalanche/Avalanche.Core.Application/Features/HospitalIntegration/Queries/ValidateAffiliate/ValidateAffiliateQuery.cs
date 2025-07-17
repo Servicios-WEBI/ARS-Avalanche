@@ -13,8 +13,7 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Queries.Valida
     public class ValidateAffiliateQuery : IRequest<ValidateAffiliateQueryResponse>
     {
         [SwaggerParameter(Description = "Tipo de documento")]
-        [Required(ErrorMessage = "Debe de ingresar el tipo de documento")]
-        public string DocumentType { get; set; }
+        public string? DocumentType { get; set; }
 
         [SwaggerParameter(Description = "Número de documento")]
         [Required(ErrorMessage = "Debe de ingresar el número de documento")]
