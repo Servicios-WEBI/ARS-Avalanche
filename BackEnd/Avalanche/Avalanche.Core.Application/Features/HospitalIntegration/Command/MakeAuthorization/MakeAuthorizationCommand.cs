@@ -14,8 +14,7 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Command.MakeAu
     public class MakeAuthorizationCommand : IRequest<AuthorizationResponseDTO>
     {
         [SwaggerParameter(Description = "Tipo de documento del afiliado.")]
-        [Required(ErrorMessage = "Debe ingresar el tipo de documento.")]
-        public string DocumentType { get; set; }
+        public string? DocumentType { get; set; }
 
         [SwaggerParameter(Description = "Número del documento del afiliado.")]
         [Required(ErrorMessage = "Debe ingresar el número del documento.")]

@@ -4,7 +4,7 @@ namespace Avalanche.Core.Application.Interfaces.Services
 {
     public interface IAffiliateValidationService
     {
-        Task<AffiliateValidationResult> ValidateAsync(string documentType, string documentNumber,
+        Task<AffiliateValidationResult> ValidateAsync(string? documentType, string documentNumber,
             string? policyNumber, CancellationToken ct = default);
     }
 }
