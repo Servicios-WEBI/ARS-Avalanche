@@ -1,0 +1,55 @@
+﻿using Avalanche.Core.Application.Constants;
+using Avalanche.Core.Application.Dtos.Common;
+using Avalanche.Core.Application.Features.Reports.Queries.GetAuthorizationSummary;
+using Avalanche.Core.Application.Helpers;
+using Avalanche.Interface.BusinessAPI.Controllers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+
+namespace Avalanche.Interface.BusinessApi.Controllers.v1
+{
+    [Route("reports/")]
+    [SwaggerTag("Consulta de reportes")]
+    public class ReportsController : BaseApiController
+    {
+        [Authorize(Roles = "Administrator")]
+        [HttpGet("/authorizations/summary")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetAuthorizationSummaryQueryResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDTO))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDTO))]
+        [SwaggerOperation(
+           Summary = "Reporte de autorizaciones",
+           Description = "Permite obtener información de reportería sobre las autorizaciones por mes"
+        )]
+        public async Task<IActionResult> GetAuthorizationSummary([FromQuery] GetAuthorizationSummaryQuery query)
+        {
+            try
+            {
+                if (query == null)
+                {
+                    return BadRequest(ErrorMapperHelper.Error(ErrorMessages.BadRequest, "El cuerpo de la solicitud no puede estar vacío o tiene errores de formato."));
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList<string>();
+
+                    return BadRequest(ErrorMapperHelper.ListError(errors));
+                }
+
+                var result = await Mediator.Send(query);
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ErrorMapperHelper.Error(ErrorMessages.InternalServer, e.Message));
+            }
+        }
+    }
+}
