@@ -1,0 +1,150 @@
+name: 🔄 Feature to Release Integration PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      feature_branch:
+        description: 'Rama feature a integrar'
+        required: true
+        default: 'feature'
+        type: string
+      release_branch:
+        description: 'Rama release destino'
+        required: true
+        default: 'release'
+        type: string
+      pr_title_suffix:
+        description: 'Sufijo personalizado para el título del PR'
+        required: false
+        type: string
+
+jobs:
+  create-feature-to-release-pr:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 🔄 Checkout código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📝 Configurar Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: 🔍 Verificar ramas
+        run: |
+          echo "Verificando existencia de ramas..."
+          git checkout ${{ github.event.inputs.feature_branch }}
+          git checkout ${{ github.event.inputs.release_branch }}
+          echo "✅ Ambas ramas existen"
+
+      - name: 📊 Analizar diferencias
+        id: differences
+        run: |
+          git checkout ${{ github.event.inputs.feature_branch }}
+          
+          # Contar commits adelantados
+          COMMITS_AHEAD=$(git rev-list ${{ github.event.inputs.release_branch }}..${{ github.event.inputs.feature_branch }} --count)
+          echo "commits_ahead=$COMMITS_AHEAD" >> $GITHUB_OUTPUT
+          
+          # Listar archivos modificados
+          FILES_CHANGED=$(git diff --name-only ${{ github.event.inputs.release_branch }}...${{ github.event.inputs.feature_branch }} | wc -l)
+          echo "files_changed=$FILES_CHANGED" >> $GITHUB_OUTPUT
+          
+          # Generar lista de commits
+          git log --oneline ${{ github.event.inputs.release_branch }}..${{ github.event.inputs.feature_branch }} > commits_list.txt
+          
+          echo "📊 Análisis de diferencias:"
+          echo "- Commits adelantados: $COMMITS_AHEAD"
+          echo "- Archivos modificados: $FILES_CHANGED"
+
+      - name: 🔍 Detectar conflictos potenciales
+        run: |
+          git checkout ${{ github.event.inputs.release_branch }}
+          
+          if git merge-tree $(git merge-base ${{ github.event.inputs.feature_branch }} ${{ github.event.inputs.release_branch }}) ${{ github.event.inputs.feature_branch }} ${{ github.event.inputs.release_branch }} | grep -q "<<<<<<< "; then
+            echo "⚠️ Conflictos potenciales detectados"
+            echo "has_conflicts=true" >> $GITHUB_ENV
+          else
+            echo "✅ No se detectaron conflictos"
+            echo "has_conflicts=false" >> $GITHUB_ENV
+          fi
+
+      - name: 📝 Generar descripción del PR
+        run: |
+          cat > pr_description.md << 'EOF'
+          # 🔄 Integración Feature → Release
+          
+          ## 📋 Descripción
+          **Integración automática de cambios desde `${{ github.event.inputs.feature_branch }}` hacia `${{ github.event.inputs.release_branch }}`**
+          
+          Esta integración consolida todos los cambios desarrollados para el próximo ciclo de release.
+          
+          ## 📊 Estadísticas de Integración
+          - **Commits a integrar**: ${{ steps.differences.outputs.commits_ahead }}
+          - **Archivos modificados**: ${{ steps.differences.outputs.files_changed }}
+          - **Conflictos detectados**: ${{ env.has_conflicts == 'true' && '⚠️ Sí' || '✅ No' }}
+          
+          ## 🔄 Cambios Incluidos
+          ### Commits a integrar:
+          ```
+          $(cat commits_list.txt)
+          ```
+          
+          ## 🧪 Validaciones Requeridas
+          - [ ] Revisión de código completada
+          - [ ] Pruebas unitarias ejecutadas
+          - [ ] Pruebas de integración validadas
+          - [ ] Validación en ambiente de staging
+          - [ ] Aprobación del líder técnico
+          
+          ## 🚀 Impacto en Release
+          ${{ env.has_conflicts == 'true' && '**⚠️ ATENCIÓN**: Se detectaron conflictos potenciales. Revisar manualmente antes del merge.' || '**✅ LISTO**: Sin conflictos detectados, integración segura.' }}
+          
+          ## 📝 Notas Adicionales
+          - Generado automáticamente por GitHub Actions
+          - Revisar cuidadosamente antes de aprobar
+          - Validar en staging antes del merge final
+          
+          ---
+          **Rama origen**: `${{ github.event.inputs.feature_branch }}`  
+          **Rama destino**: `${{ github.event.inputs.release_branch }}`  
+          **Fecha**: $(date -I)
+          EOF
+
+      - name: 🚀 Crear Pull Request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Determinar título del PR
+          PR_TITLE="🔄 Integración ${{ github.event.inputs.feature_branch }} → ${{ github.event.inputs.release_branch }}"
+          if [ -n "${{ github.event.inputs.pr_title_suffix }}" ]; then
+            PR_TITLE="$PR_TITLE - ${{ github.event.inputs.pr_title_suffix }}"
+          else
+            PR_TITLE="$PR_TITLE - $(date -I)"
+          fi
+          
+          # Crear el PR usando GitHub CLI
+          gh pr create \
+            --base "${{ github.event.inputs.release_branch }}" \
+            --head "${{ github.event.inputs.feature_branch }}" \
+            --title "$PR_TITLE" \
+            --body-file pr_description.md \
+            --label "release-integration" \
+            --label "automated"
+
+      - name: 📊 Resumen de ejecución
+        run: |
+          echo "## 🎯 Resumen de Integración" >> $GITHUB_STEP_SUMMARY
+          echo "| Métrica | Valor |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Rama origen | \`${{ github.event.inputs.feature_branch }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Rama destino | \`${{ github.event.inputs.release_branch }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Commits a integrar | ${{ steps.differences.outputs.commits_ahead }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Archivos modificados | ${{ steps.differences.outputs.files_changed }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Conflictos detectados | ${{ env.has_conflicts == 'true' && '⚠️ Sí' || '✅ No' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Pull Request creado exitosamente**" >> $GITHUB_STEP_SUMMARY
