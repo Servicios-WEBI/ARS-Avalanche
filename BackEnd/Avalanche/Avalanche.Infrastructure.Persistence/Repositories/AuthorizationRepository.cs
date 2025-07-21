@@ -1,6 +1,7 @@
 ﻿using Avalanche.Core.Application.Constants;
 using Avalanche.Core.Application.Dtos.Reports;
 using Avalanche.Core.Application.Features.Reports.Queries.GetAnalystPerformance;
+using Avalanche.Core.Application.Features.Reports.Queries.GetAuthorizationDistribution;
 using Avalanche.Core.Application.Features.Reports.Queries.GetAuthorizationSummary;
 using Avalanche.Core.Application.Interfaces.Repositories;
 using Avalanche.Core.Domain.Entities;
@@ -123,6 +124,41 @@ namespace Avalanche.Infrastructure.Persistence.Repositories
             }
 
             return result;
+        }
+
+        public async Task<GetAuthorizationDistributionQueryResponse> GetAuthorizationDistributionAsync(DateOnly start, DateOnly end)
+        {
+            using var db = _dbContext.CreateDbContext();
+
+            var query = db.Authorization
+                .Include(a => a.AuthorizationType)
+                .Include(a => a.Hospital)
+                .Include(a => a.Policy)
+                .ThenInclude(p => p.Plan)
+                .Where(a => a.ApplicationDate >= start && a.ApplicationDate <= end);
+
+            var byType = await query
+                .GroupBy(a => a.AuthorizationType.Name)
+                .Select(g => new LabelCountDTO { Label = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            var byHospital = await query
+                .GroupBy(a => a.Hospital.Name)
+                .Select(g => new LabelCountDTO { Label = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            var byPlan = await query
+                .GroupBy(a => a.Policy.Plan.Name)
+                .Select(g => new LabelCountDTO { Label = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            return new GetAuthorizationDistributionQueryResponse
+            {
+                Period = new BaseReportDTO { Start = start, End = end },
+                ByType = byType,
+                ByHospital = byHospital,
+                ByPlan = byPlan
+            };
         }
     }
 }
