@@ -5,7 +5,6 @@ namespace Avalanche.Core.Application.Interfaces.Services
 {
     public interface IEmailService
 	{
-		public MailSettings _mailSettings { get; }
 		Task SendAsync(EmailRequest request);
 	}
 }

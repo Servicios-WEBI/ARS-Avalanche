@@ -31,6 +31,7 @@ namespace Avalanche.Infrastructure.Shared
             });
 
             services.AddTransient<IEmailService, EmailService>();
+            services.AddScoped<IEmailTemplateService, EmailTemplateService>();
 		}
 	}
 }

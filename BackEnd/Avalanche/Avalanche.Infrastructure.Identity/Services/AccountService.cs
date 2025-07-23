@@ -4,6 +4,7 @@ using Avalanche.Core.Application.Dtos.Common;
 using Avalanche.Core.Application.Dtos.Email;
 using Avalanche.Core.Application.Enums;
 using Avalanche.Core.Application.Helpers;
+using Avalanche.Core.Application.Interfaces.Helpers;
 using Avalanche.Core.Application.Interfaces.Services;
 using Avalanche.Core.Domain.Settings;
 using Avalanche.Infrastructure.Identity.Entities;
@@ -124,20 +125,6 @@ namespace Avalanche.Infrastructure.Identity.Services
             {
                 var result = await _userManager.CreateAsync(user, request.Password);
                 string userRole = "";
-
-                switch (role)
-                {
-                    case Roles.Analyst:
-                        userRole = "analista";
-                        break;
-                    case Roles.Administrator:
-                        userRole = "administrador";
-                        break;
-                    case Roles.Guest:
-                        userRole = "hospital";
-                        break;
-                }
-
                 if (result.Succeeded)
                 {
                     response.Id = user.Id;
@@ -149,12 +136,19 @@ namespace Avalanche.Infrastructure.Identity.Services
                     response.UrlImage = user.UrlImage;
 
                     await _userManager.AddToRoleAsync(user, role.ToString());
-                    await _emailService.SendAsync(new EmailRequest()
+
+                    switch (role)
                     {
-                        To = user.Email,
-                        Body = EmailHelper.MakeEmailForConfirmed(user.FirstName + " " + user.LastName),
-                        Subject = $"Registro de {userRole}"
-                    });
+                        case Roles.Analyst:
+                            userRole = "analista";
+                            break;
+                        case Roles.Administrator:
+                            userRole = "administrador";
+                            break;
+                        case Roles.Guest:
+                            userRole = "hospital";
+                            break;
+                    }
                 }
                 else
                 {
@@ -170,6 +164,7 @@ namespace Avalanche.Infrastructure.Identity.Services
                     }
                     return response;
                 }
+
                 response.Status = "Exitoso";
                 response.Details = [new ErrorDetailsDTO { Code = "000", Message = $"Se insertó correctamente el {userRole}"}];
 

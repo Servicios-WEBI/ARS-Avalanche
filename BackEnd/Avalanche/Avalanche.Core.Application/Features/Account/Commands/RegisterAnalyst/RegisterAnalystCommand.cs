@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Avalanche.Core.Application.Dtos.Account;
+using Avalanche.Core.Application.Dtos.Email;
 using Avalanche.Core.Application.Helpers;
+using Avalanche.Core.Application.Interfaces.Helpers;
 using Avalanche.Core.Application.Interfaces.Repositories;
 using Avalanche.Core.Application.Interfaces.Services;
 using Avalanche.Core.Domain.Entities;
@@ -46,12 +48,17 @@ namespace Avalanche.Core.Application.Features.Account.Commands.RegisterAnalyst
     {
         private readonly IAccountService _accountService;
         private readonly IAnalystRepository _analystRepository;
+        private readonly IEmailService _emailService;
+        private readonly IEmailHelper _emailHelper;
         private readonly IMapper _mapper;
 
-        public RegisterAnalystCommandHandler(IAccountService accountService, IAnalystRepository analystRepository, IMapper mapper)
+        public RegisterAnalystCommandHandler(IAccountService accountService, IAnalystRepository analystRepository,
+            IEmailService emailService, IEmailHelper emailHelper, IMapper mapper)
         {
             _accountService = accountService;
             _analystRepository = analystRepository;
+            _emailService = emailService;
+            _emailHelper = emailHelper;
             _mapper = mapper;
         }
 
@@ -73,23 +80,47 @@ namespace Avalanche.Core.Application.Features.Account.Commands.RegisterAnalyst
                 
                 var response = await _accountService.RegisterUserAsync(request, Enums.Roles.Analyst);
 
-                try
+                if(response.Status != "Fallido")
                 {
-                    Analyst analyst = new()
+                    try
                     {
-                        Id = response.Id,
-                        FullName = response.FirstName + " " + response.LastName,
-                        Email = response.Email,
-                        IsActive = true
-                    };
+                        Analyst analyst = new()
+                        {
+                            Id = response.Id,
+                            FullName = response.FirstName + " " + response.LastName,
+                            Email = response.Email,
+                            IsActive = true
+                        };
 
-                    await _analystRepository.AddAsync(analyst);
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception("Hubo un error creando el analista");
-                }
+                        await _analystRepository.AddAsync(analyst);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("Hubo un error creando el analista");
+                    }
 
+                    try
+                    {
+                        UserWelcomeEmail dto = new()
+                        {
+                            FullName = response.FirstName + " " + response.LastName,
+                            UserName = request.UserName,
+                            Password = request.Password
+                        };
+
+                        await _emailService.SendAsync(new EmailRequest()
+                        {
+                            To = response.Email,
+                            Body = _emailHelper.MakeEmailForAnalyst(dto),
+                            Subject = "\"¡Bienvenido/a como Analista en Avalanche!\""
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("Hubo un error enviando el correo al analista");
+                    }
+                }
+                
                 if (response.Status == "Fallido")
 				{
                     ImageUpload.DeleteFile(request.UrlImage);
