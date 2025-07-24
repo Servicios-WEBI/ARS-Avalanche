@@ -1,4 +1,6 @@
-﻿using Avalanche.Core.Application.Interfaces.Services;
+﻿using Avalanche.Core.Application.Helpers;
+using Avalanche.Core.Application.Interfaces.Helpers;
+using Avalanche.Core.Application.Interfaces.Services;
 using Avalanche.Core.Application.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +18,7 @@ namespace Avalanche.Core.Application
             #region Services
             services.AddScoped<IPlanCoverageComparisonService, PlanCoverageComparisonService>();
             services.AddScoped<IAffiliateValidationService, AffiliateValidationService>();
+            services.AddScoped<IEmailHelper, EmailHelper>();
             #endregion
         }
     }
