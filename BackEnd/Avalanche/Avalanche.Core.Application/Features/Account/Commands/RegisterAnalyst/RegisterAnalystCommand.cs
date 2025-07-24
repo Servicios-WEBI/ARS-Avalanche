@@ -80,50 +80,48 @@ namespace Avalanche.Core.Application.Features.Account.Commands.RegisterAnalyst
                 
                 var response = await _accountService.RegisterUserAsync(request, Enums.Roles.Analyst);
 
-                if(response.Status != "Fallido")
-                {
-                    try
-                    {
-                        Analyst analyst = new()
-                        {
-                            Id = response.Id,
-                            FullName = response.FirstName + " " + response.LastName,
-                            Email = response.Email,
-                            IsActive = true
-                        };
-
-                        await _analystRepository.AddAsync(analyst);
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception("Hubo un error creando el analista");
-                    }
-
-                    try
-                    {
-                        UserWelcomeEmail dto = new()
-                        {
-                            FullName = response.FirstName + " " + response.LastName,
-                            UserName = request.UserName,
-                            Password = request.Password
-                        };
-
-                        await _emailService.SendAsync(new EmailRequest()
-                        {
-                            To = response.Email,
-                            Body = _emailHelper.MakeEmailForAnalyst(dto),
-                            Subject = "\"¡Bienvenido/a como Analista en Avalanche!\""
-                        });
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception("Hubo un error enviando el correo al analista");
-                    }
-                }
-                
                 if (response.Status == "Fallido")
-				{
+                {
                     ImageUpload.DeleteFile(request.UrlImage);
+                    return response;
+                }
+
+                try
+                {
+                    Analyst analyst = new()
+                    {
+                        Id = response.Id,
+                        FullName = response.FirstName + " " + response.LastName,
+                        Email = response.Email,
+                        IsActive = true
+                    };
+
+                    await _analystRepository.AddAsync(analyst);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Hubo un error creando el analista");
+                }
+
+                try
+                {
+                    UserWelcomeEmail dto = new()
+                    {
+                        FullName = response.FirstName + " " + response.LastName,
+                        UserName = request.UserName,
+                        Password = request.Password
+                    };
+
+                    await _emailService.SendAsync(new EmailRequest()
+                    {
+                        To = response.Email,
+                        Body = _emailHelper.MakeEmailForAnalyst(dto),
+                        Subject = "\"¡Bienvenido/a como Analista en Avalanche!\""
+                    });
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Hubo un error enviando el correo al analista");
                 }
 
                 return response;

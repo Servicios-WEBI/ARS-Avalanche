@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Avalanche.Core.Application.Dtos.Account;
+using Avalanche.Core.Application.Dtos.Email;
 using Avalanche.Core.Application.Helpers;
+using Avalanche.Core.Application.Interfaces.Helpers;
 using Avalanche.Core.Application.Interfaces.Services;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -43,11 +45,16 @@ namespace Avalanche.Core.Application.Features.Account.Commands.RegisterAdmin
     public class RegisterAdminCommandHandler : IRequestHandler<RegisterAdminCommand, RegisterResponse>
     {
         private readonly IAccountService _accountService;
+        private readonly IEmailService _emailService;
+        private readonly IEmailHelper _emailHelper;
         private readonly IMapper _mapper;
 
-        public RegisterAdminCommandHandler(IAccountService accountService, IMapper mapper)
+        public RegisterAdminCommandHandler(IAccountService accountService, IEmailService emailService, IEmailHelper emailHelper,
+            IMapper mapper)
         {
             _accountService = accountService;
+            _emailService = emailService;
+            _emailHelper = emailHelper;
             _mapper = mapper;
         }
 
@@ -72,6 +79,28 @@ namespace Avalanche.Core.Application.Features.Account.Commands.RegisterAdmin
                 if (response.Status == "Fallido")
 				{
                     ImageUpload.DeleteFile(request.UrlImage);
+                    return response;
+                }
+
+                try
+                {
+                    UserWelcomeEmail dto = new()
+                    {
+                        FullName = response.FirstName + " " + response.LastName,
+                        UserName = request.UserName,
+                        Password = request.Password
+                    };
+
+                    await _emailService.SendAsync(new EmailRequest()
+                    {
+                        To = response.Email,
+                        Body = _emailHelper.MakeEmailForAdmin(dto),
+                        Subject = "\"¡Bienvenido/a como Administrador en Avalanche!\""
+                    });
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Hubo un error enviando el correo al administrador");
                 }
 
                 return response;
