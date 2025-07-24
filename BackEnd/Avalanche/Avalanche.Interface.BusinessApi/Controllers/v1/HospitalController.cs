@@ -76,6 +76,18 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
                 }
 
                 var result = await Mediator.Send(command);
+
+                if (result.Status == "Fallido")
+                {
+                    ErrorDTO errorDTO = new()
+                    {
+                        Status = result.Status,
+                        Details = result.Details
+                    };
+
+                    return BadRequest(errorDTO);
+                }
+
                 return Ok(result);
             }
             catch (Exception e)

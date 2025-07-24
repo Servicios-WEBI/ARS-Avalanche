@@ -22,4 +22,8 @@
     <ProjectReference Include="..\Avalanche.Core.Domain\Avalanche.Core.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Interfaces\Helpers\" />
+  </ItemGroup>
+
 </Project>

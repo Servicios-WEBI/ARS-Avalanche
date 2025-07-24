@@ -17,4 +17,10 @@
     <ProjectReference Include="..\Avalanche.Core.Domain\Avalanche.Core.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+  	<None Update="EmailTemplates\*">
+  		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  	</None>
+  </ItemGroup>
+
 </Project>
