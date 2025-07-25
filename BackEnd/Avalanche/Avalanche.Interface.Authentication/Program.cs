@@ -1,10 +1,12 @@
 using Avalanche.Core.Application;
+using Avalanche.Core.Application.Interfaces.Services;
 using Avalanche.Infrastructure.Identity;
 using Avalanche.Infrastructure.Identity.Entities;
 using Avalanche.Infrastructure.Identity.Seeds;
 using Avalanche.Infrastructure.Persistence;
 using Avalanche.Infrastructure.Shared;
 using Avalanche.Interface.Authentication.Extensions;
+using Avalanche.Interface.Authentication.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
@@ -71,6 +73,8 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddSignalR();
+builder.Services.AddScoped<INotificationSender, NotificationSender>();
 
 // Build the application
 var app = builder.Build();
