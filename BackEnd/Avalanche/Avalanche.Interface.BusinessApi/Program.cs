@@ -2,13 +2,15 @@ using AutoMapper;
 using Avalanche.Core.Application;
 using Avalanche.Core.Application.Helpers;
 using Avalanche.Core.Application.Interfaces.Repositories;
+using Avalanche.Core.Application.Interfaces.Services;
 using Avalanche.Core.Application.Seeds;
 using Avalanche.Infrastructure.Identity;
 using Avalanche.Infrastructure.Persistence;
 using Avalanche.Infrastructure.Shared;
 using Avalanche.Interface.BusinessApi.Extensions;
+using Avalanche.Interface.BusinessApi.Hubs;
+using Avalanche.Interface.BusinessApi.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -74,6 +76,8 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddSignalR();
+builder.Services.AddScoped<INotificationSender, NotificationSender>();
 
 // Build the application
 var app = builder.Build();
@@ -101,6 +105,7 @@ app.UseSwaggerExtension();
 app.UseHealthChecks("/health");
 app.UseSession();
 
+app.MapHub<NotificationHub>("/hub/notifications");
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();

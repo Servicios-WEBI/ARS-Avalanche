@@ -13,6 +13,7 @@ using Avalanche.Core.Application.Features.Account.Queries.GetValidationRefreshTo
 using Avalanche.Core.Application.Helpers;
 using Avalanche.Core.Domain.Settings;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
@@ -151,6 +152,7 @@ namespace Avalanche.Interface.Authentication.Controllers
             }
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpPost("register-admin")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RegisterResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(RegisterResponse))]
@@ -188,6 +190,7 @@ namespace Avalanche.Interface.Authentication.Controllers
             }
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpPost("register-analyst")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RegisterResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(RegisterResponse))]

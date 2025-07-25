@@ -1,10 +1,11 @@
 ﻿using Avalanche.Core.Application.Constants;
+using Avalanche.Core.Application.Dtos.Authorization;
 using Avalanche.Core.Application.Dtos.Common;
 using Avalanche.Core.Application.Dtos.HospitalIntegration;
 using Avalanche.Core.Application.Interfaces.Repositories;
 using Avalanche.Core.Application.Interfaces.Services;
-using Avalanche.Core.Domain.Entities;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
@@ -45,10 +46,14 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Command.MakeAu
         private readonly IHospitalRepository _hospitalRepository;
         private readonly IStatusRepository _statusRepository;
         private readonly IAnalystRepository _analystRepository;
+        private readonly INotificationSender _notificationSender;
+        private readonly IAccountService _accountService;
+        private readonly ILogger<MakeAuthorizationCommandHandler> _logger;
 
         public MakeAuthorizationCommandHandler(IAffiliateValidationService validationService, IPlanCoverageRepository planCoverageRepository,
             IAuthorizationRepository authorizationRepository, IAuthorizationTypeRepository authorizationTypeRepository,
-            IHospitalRepository hospitalRepository, IStatusRepository statusRepository, IAnalystRepository analystRepository)
+            IHospitalRepository hospitalRepository, IStatusRepository statusRepository, IAnalystRepository analystRepository,
+            INotificationSender notificationSender, IAccountService accountService, ILogger<MakeAuthorizationCommandHandler> logger)
         {
             _validationService = validationService;
             _planCoverageRepository = planCoverageRepository;
@@ -57,6 +62,9 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Command.MakeAu
             _hospitalRepository = hospitalRepository;
             _statusRepository = statusRepository;
             _analystRepository = analystRepository;
+            _notificationSender = notificationSender;
+            _accountService = accountService;
+            _logger = logger;
         }
 
         public async Task<AuthorizationResponseDTO> Handle(MakeAuthorizationCommand command, CancellationToken cancellationToken)
@@ -141,6 +149,24 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Command.MakeAu
                 }
 
                 var authorization = await _authorizationRepository.AddAsync(authorizationToAdd);
+
+                try
+                {
+                    AuthorizationNotificationDTO dto = new()
+                    {
+                        AuthorizationId = authorization.Id,
+                        Message = "¡Te han asignado una nueva autorización!",
+                        NotificationDate = DateTime.Now
+                    };
+
+                    var analystUser = await _accountService.GetUsersById(authorization.AssignedAnalyst);
+
+                    await _notificationSender.SendAuthorizationAssignedAsync(analystUser.UserName, dto);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Hubo un error mientras se intentó notificar al analista");
+                }
 
                 response.Id = authorization.Id;
                 response.DocumentType = command.DocumentType;

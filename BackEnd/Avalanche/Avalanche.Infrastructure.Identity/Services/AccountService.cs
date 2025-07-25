@@ -491,6 +491,7 @@ namespace Avalanche.Infrastructure.Identity.Services
             UserDTO dto = new()
             {
                 Id = user.Id,
+                UserName = user.UserName,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
