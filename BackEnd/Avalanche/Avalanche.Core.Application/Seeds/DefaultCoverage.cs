@@ -40,8 +40,7 @@ namespace Avalanche.Core.Application.Seeds
                     {
                         Coverage coverage = new()
                         {
-                            Name = item,
-                            Description = item,
+                            Name = item
                         };
 
                         coverageList.Add(coverage);
