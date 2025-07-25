@@ -95,7 +95,7 @@ namespace Avalanche.Core.Application.Features.Account.Commands.RegisterAdmin
                     {
                         To = response.Email,
                         Body = _emailHelper.MakeEmailForAdmin(dto),
-                        Subject = "\"¡Bienvenido/a como Administrador en Avalanche!\""
+                        Subject = "¡Bienvenido/a como Administrador en Avalanche!"
                     });
                 }
                 catch (Exception ex)

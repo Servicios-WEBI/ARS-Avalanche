@@ -116,7 +116,7 @@ namespace Avalanche.Core.Application.Features.Account.Commands.RegisterAnalyst
                     {
                         To = response.Email,
                         Body = _emailHelper.MakeEmailForAnalyst(dto),
-                        Subject = "\"¡Bienvenido/a como Analista en Avalanche!\""
+                        Subject = "¡Bienvenido/a como Analista en Avalanche!"
                     });
                 }
                 catch (Exception ex)

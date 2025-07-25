@@ -102,7 +102,7 @@ namespace Avalanche.Core.Application.Features.Hospital.Command.Add
                     {
                         To = entity.Email,
                         Body = _emailHelper.MakeEmailForHospital(dto),
-                        Subject = "\"¡Bienvenido al sistema Avalanche!\""
+                        Subject = "¡Bienvenido al sistema Avalanche!"
                     });
                 }
                 catch (Exception ex)
