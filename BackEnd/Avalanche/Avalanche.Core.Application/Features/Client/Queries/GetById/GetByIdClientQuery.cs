@@ -21,12 +21,15 @@ namespace Avalanche.Core.Application.Features.Client.Queries.GetById
         private readonly IClientRepository _clientRepository;
         private readonly IPolicyRepository _policyRepository;
         private readonly IStatusRepository _statusRepository;
+        private readonly IDocumentTypeRepository _documentRepository;
 
-        public GetByIdClientQueryHandler(IClientRepository clientRepository, IPolicyRepository policyRepository, IStatusRepository statusRepository)
+        public GetByIdClientQueryHandler(IClientRepository clientRepository, IPolicyRepository policyRepository,
+            IStatusRepository statusRepository, IDocumentTypeRepository documentRepository)
         {
             _clientRepository = clientRepository;
             _policyRepository = policyRepository;
             _statusRepository = statusRepository;
+            _documentRepository = documentRepository;
         }
 
         public async Task<GetByIdClientQueryResponse> Handle(GetByIdClientQuery query, CancellationToken cancellationToken)
@@ -34,6 +37,7 @@ namespace Avalanche.Core.Application.Features.Client.Queries.GetById
             try
             {
                 GetByIdClientQueryResponse result = new();
+                List<AffiliatesResponseDTO> affiliates = new();
 
                 var entity = await _clientRepository.GetByIdWithIncludeAsync(t => t.Id == query.Id, new List<Expression<Func<Domain.Entities.Client, object>>>
                 {
@@ -60,13 +64,23 @@ namespace Avalanche.Core.Application.Features.Client.Queries.GetById
                     });
                 }
 
-                var affiliates = entity.Affiliates.Where(x => (x.DocumentNumber != entity.DocumentNumber) && (x.StatusId == active.Id)).Select(a => new AffiliatesResponseDTO
+                foreach( var item in entity.Affiliates.Where(x => (x.DocumentNumber != entity.DocumentNumber) && (x.StatusId == active.Id)))
                 {
-                    AffiliateId = a.Id,
-                    AffiliateName = a.FirstName + " " + a.LastName,
-                    DocumentType = a.DocumentType.Name,
-                    DocumentNumber = a.DocumentNumber
-                }).ToList();
+                    if (item.DocumentType == null)
+                    {
+                        item.DocumentType = await _documentRepository.GetByIdAsync(item.DocumentTypeId);
+                    }
+
+                    AffiliatesResponseDTO dto = new ()
+                    {
+                        AffiliateId = item.Id,
+                        AffiliateName = item.FirstName + " " + item.LastName,
+                        DocumentType = item.DocumentType.Name,
+                        DocumentNumber = item.DocumentNumber
+                    };
+
+                    affiliates.Add(dto);
+                }
 
                 ClientResponseDTO client = new()
                 {
