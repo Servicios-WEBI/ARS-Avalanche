@@ -104,7 +104,22 @@ namespace Avalanche.Core.Application.Mappings
                 .ForMember(x => x.LastModified, opt => opt.Ignore())
                 .ForMember(x => x.LastModifiedBy, opt => opt.Ignore());
 
-            CreateMap<Affiliate, AddAffiliateCommand>()
+            CreateMap<Affiliate, AddManyResponseChildDTO>()
+                .ForMember(x => x.AffiliateStatus, opt => opt.Ignore())
+                .ReverseMap()
+                .ForMember(x => x.DocumentTypeId, opt => opt.Ignore())
+                .ForMember(x => x.DocumentType, opt => opt.Ignore())
+                .ForMember(x => x.StatusId, opt => opt.Ignore())
+                .ForMember(x => x.AffiliatePolicies, opt => opt.Ignore())
+                .ForMember(x => x.Authorizations, opt => opt.Ignore())
+                .ForMember(x => x.Status, opt => opt.Ignore())
+                .ForMember(x => x.Client, opt => opt.Ignore())
+                .ForMember(x => x.Created, opt => opt.Ignore())
+                .ForMember(x => x.CreatedBy, opt => opt.Ignore())
+                .ForMember(x => x.LastModified, opt => opt.Ignore())
+                .ForMember(x => x.LastModifiedBy, opt => opt.Ignore());
+
+            CreateMap<Affiliate, AffiliateRequestDTO>()
                 .ForMember(x => x.DocumentType, opt => opt.Ignore())
                 .ReverseMap()
                 .ForMember(x => x.DocumentTypeId, opt => opt.Ignore())
