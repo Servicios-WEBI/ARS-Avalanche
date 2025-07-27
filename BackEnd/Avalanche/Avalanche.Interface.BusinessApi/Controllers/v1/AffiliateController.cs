@@ -13,6 +13,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using Avalanche.Core.Application.Features.Affiliate.Queries.GetById;
 using Avalanche.Core.Application.Features.Affiliate.Queries.GetByDocumentNumber;
 using Avalanche.Core.Application.Features.Affiliate.Command.AssosciatePolicy;
+using Avalanche.Core.Application.Features.Affiliate.Command.AddMany;
 
 namespace Avalanche.Interface.BusinessApi.Controllers.v1
 {
@@ -135,6 +136,48 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
                 }
 
                 var result = await Mediator.Send(command);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ErrorMapperHelper.Error(ErrorMessages.InternalServer, e.Message));
+            }
+        }
+
+        [Authorize(Roles = "Administrator, Analyst")]
+        [HttpPost("add-many")]
+        [SwaggerOperation(
+           Summary = "Crear muchos afiliados",
+           Description = "Nos permite crear muchos afiliados"
+        )]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AddManyResponseDTO))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorDTO))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorDTO))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDTO))]
+        public async Task<IActionResult> PostManyAffiliates([FromBody] AddManyAffiliateCommand command)
+        {
+            try
+            {
+                if (command == null)
+                {
+                    return BadRequest(ErrorMapperHelper.Error(ErrorMessages.BadRequest, "El cuerpo de la solicitud no puede estar vacío o tiene errores de formato."));
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList<string>();
+
+                    return BadRequest(ErrorMapperHelper.ListError(errors));
+                }
+
+                var result = await Mediator.Send(command);
+
+                if (result.Status != "Exitoso")
+                    return BadRequest(result);
+
                 return Ok(result);
             }
             catch (Exception e)
