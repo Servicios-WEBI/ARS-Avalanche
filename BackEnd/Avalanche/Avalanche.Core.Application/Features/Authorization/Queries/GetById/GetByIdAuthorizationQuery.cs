@@ -67,6 +67,7 @@ namespace Avalanche.Core.Application.Features.Authorization.Queries.GetById
                     PolicyNumber = entity.Policy.Number,
                     PolicyId = entity.PolicyId,
                     AssignedAnalyst = entity.Analyst.FullName,
+                    AssignedAnalystId = entity.Analyst.Id,
                     Plan = plan.Name
                 };
 

@@ -59,6 +59,9 @@ namespace Avalanche.Core.Application.Features.Authorization.Queries.GetById
         [SwaggerSchema(Description = "Analista asignado")]
         public string AssignedAnalyst { get; set; }
 
+        [SwaggerSchema(Description = "Id del analista asignado")]
+        public string AssignedAnalystId { get; set; }
+
         [SwaggerSchema(Description = "Hospital que realizó la solicitud.")]
         public string Hospital { get; set; }
 
