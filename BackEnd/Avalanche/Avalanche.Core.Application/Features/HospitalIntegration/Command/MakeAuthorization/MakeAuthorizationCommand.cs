@@ -128,24 +128,27 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Command.MakeAu
 
                 if(!policyCoverages.Any(p => p.Coverage.Name == command.AuthorizationType))
                 {
-                    response.Status = "El afiliado no posee esa cobertura";
-                    response.Details = [new ErrorDetailsDTO() { Code = ErrorMessages.BadRequest, Message = "El plan suscrito del cliente no cubre este tipo de solicitud" }];
-                    return response;
-                }
-
-                var coverage = policyCoverages.FirstOrDefault(p => p.Coverage.Name == command.AuthorizationType);
-                
-                if(coverage.AmountLimit == 0 && coverage.YearFrequencyLimit == 0 && coverage.CoveragePercentage == 100)
-                {
-                    var approved = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Approved);
-                    authorizationToAdd.StatusId = approved.Id;
-                    authorizationToAdd.ApprovedAmount = command.ApplicationAmount;
-                    response.AuthorizationStatus = "Aprobada";
+                    var rejected = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Rejected);
+                    authorizationToAdd.StatusId = rejected.Id;
+                    authorizationToAdd.ApprovedAmount = 0;
+                    response.AuthorizationStatus = "Rechazada";
                 }
                 else
                 {
-                    authorizationToAdd.StatusId = pending.Id;
-                    response.AuthorizationStatus = "Pendiente";
+                    var coverage = policyCoverages.FirstOrDefault(p => p.Coverage.Name == command.AuthorizationType);
+
+                    if (coverage.AmountLimit > command.ApplicationAmount && coverage.YearFrequencyLimit == 0 && coverage.CoveragePercentage > 0)
+                    {
+                        var approved = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Approved);
+                        authorizationToAdd.StatusId = approved.Id;
+                        authorizationToAdd.ApprovedAmount = command.ApplicationAmount * (coverage.CoveragePercentage / 100);
+                        response.AuthorizationStatus = "Aprobada";
+                    }
+                    else
+                    {
+                        authorizationToAdd.StatusId = pending.Id;
+                        response.AuthorizationStatus = "Pendiente";
+                    }
                 }
 
                 var authorization = await _authorizationRepository.AddAsync(authorizationToAdd);
