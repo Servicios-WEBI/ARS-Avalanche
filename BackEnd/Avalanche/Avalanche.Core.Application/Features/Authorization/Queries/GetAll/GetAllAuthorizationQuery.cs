@@ -76,6 +76,7 @@ namespace Avalanche.Core.Application.Features.Authorization.Queries.GetAll
                     Hospital = a.Hospital.Name,
                     Policy = a.Policy.Number,
                     AssignedAnalyst = a.Analyst.FullName,
+                    AssignedAnalystId = a.Analyst.Id,
                     Status = a.Status.Name
                 }).ToList();
 
