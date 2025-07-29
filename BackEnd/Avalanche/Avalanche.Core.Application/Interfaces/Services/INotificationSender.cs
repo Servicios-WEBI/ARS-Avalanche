@@ -1,9 +1,9 @@
-﻿using Avalanche.Core.Application.Dtos.Authorization;
+﻿using Avalanche.Core.Application.Dtos.Notification;
 
 namespace Avalanche.Core.Application.Interfaces.Services
 {
     public interface INotificationSender
     {
-        Task SendAuthorizationAssignedAsync(string analystSub, AuthorizationNotificationDTO notification);
+        Task SendAuthorizationAssignedAsync(string analystSub, NotificationDTO notification);
     }
 }

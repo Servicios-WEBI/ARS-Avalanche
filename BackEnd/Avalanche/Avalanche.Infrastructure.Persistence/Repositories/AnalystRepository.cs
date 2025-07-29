@@ -1,9 +1,7 @@
-﻿using Avalanche.Core.Application.Constants;
-using Avalanche.Core.Application.Interfaces.Repositories;
+﻿using Avalanche.Core.Application.Interfaces.Repositories;
 using Avalanche.Core.Domain.Entities;
 using Avalanche.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Avalanche.Infrastructure.Persistence.Repositories
 {
