@@ -1,7 +1,7 @@
 ﻿using Avalanche.Core.Application.Constants;
-using Avalanche.Core.Application.Dtos.Authorization;
 using Avalanche.Core.Application.Dtos.Common;
 using Avalanche.Core.Application.Dtos.HospitalIntegration;
+using Avalanche.Core.Application.Dtos.Notification;
 using Avalanche.Core.Application.Interfaces.Repositories;
 using Avalanche.Core.Application.Interfaces.Services;
 using MediatR;
@@ -155,11 +155,12 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Command.MakeAu
 
                 try
                 {
-                    AuthorizationNotificationDTO dto = new()
+                    NotificationDTO dto = new()
                     {
                         AuthorizationId = authorization.Id,
                         Message = "¡Te han asignado una nueva autorización!",
-                        NotificationDate = DateTime.Now
+                        NotificationDate = DateTime.UtcNow,
+                        AssignedAnalyst = authorization.AssignedAnalyst
                     };
 
                     var analystUser = await _accountService.GetUsersById(authorization.AssignedAnalyst);

@@ -55,6 +55,7 @@ namespace Avalanche.Infrastructure.Persistence
             services.AddTransient<IPlanRepository, PlanRepository>();
             services.AddTransient<IPolicyRepository, PolicyRepository>();
             services.AddTransient<IStatusRepository, StatusRepository>();
+            services.AddTransient<INotificationRepository, NotificationRepository>();
             #endregion
         }
     }

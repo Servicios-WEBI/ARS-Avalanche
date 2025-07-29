@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Avalanche.Infrastructure.Persistence.Repositories
 {
-    public class ClientRepository : GenericRepository<Client>, IClientRepository
+    public class NotificationRepository : GenericRepository<Notification>, INotificationRepository
     {
         private readonly IDbContextFactory<ApplicationContext> _dbContext;
 
-        public ClientRepository(IDbContextFactory<ApplicationContext> dbContext) : base(dbContext)
+        public NotificationRepository(IDbContextFactory<ApplicationContext> dbContext) : base(dbContext)
         {
             _dbContext = dbContext;
         }

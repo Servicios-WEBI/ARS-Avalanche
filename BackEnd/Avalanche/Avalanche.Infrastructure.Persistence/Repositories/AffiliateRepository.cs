@@ -2,8 +2,6 @@
 using Avalanche.Core.Domain.Entities;
 using Avalanche.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
-using System.Linq.Expressions;
 
 namespace Avalanche.Infrastructure.Persistence.Repositories
 {

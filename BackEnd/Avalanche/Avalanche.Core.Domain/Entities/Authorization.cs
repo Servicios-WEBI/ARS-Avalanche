@@ -19,5 +19,6 @@ namespace Avalanche.Core.Domain.Entities
         public string HospitalId { get; set; }
         public Analyst Analyst { get; set; }
         public string AssignedAnalyst { get; set; }
+        public List<Notification> Notifications { get; set; }
     }
 }
