@@ -25,6 +25,7 @@ using Avalanche.Core.Application.Features.Status.Queries.GetAll;
 using Avalanche.Core.Domain.Entities;
 using Avalanche.Core.Application.Features.Affiliate.Command.AssosciatePolicy;
 using Avalanche.Core.Application.Dtos.PlanCoverage;
+using Avalanche.Core.Application.Dtos.Notification;
 
 namespace Avalanche.Core.Application.Mappings
 {
@@ -275,6 +276,22 @@ namespace Avalanche.Core.Application.Mappings
                 .ForMember(x => x.CreatedBy, opt => opt.Ignore())
                 .ForMember(x => x.LastModified, opt => opt.Ignore())
                 .ForMember(x => x.LastModifiedBy, opt => opt.Ignore());
+            #endregion
+
+            #region Notification
+            CreateMap<Notification, NotificationDTO>()
+                .ForMember(x => x.Message, opt => opt.Ignore())
+                .ReverseMap()
+                .ForMember(x => x.Analyst, opt => opt.Ignore())
+                .ForMember(x => x.Authorization, opt => opt.Ignore())
+                .ForMember(x => x.Created, opt => opt.Ignore())
+                .ForMember(x => x.CreatedBy, opt => opt.Ignore())
+                .ForMember(x => x.LastModified, opt => opt.Ignore())
+                .ForMember(x => x.LastModifiedBy, opt => opt.Ignore());
+
+            CreateMap<AuthorizationNotificationDTO, NotificationDTO>()
+                .ForMember(x => x.AssignedAnalyst, opt => opt.Ignore())
+                .ReverseMap();
             #endregion
 
             #region Plan

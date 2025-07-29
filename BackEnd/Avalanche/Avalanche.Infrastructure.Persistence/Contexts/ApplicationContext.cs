@@ -17,6 +17,7 @@ namespace Avalanche.Infrastructure.Persistence.Contexts
         public DbSet<DocumentType> DocumentType { get; set; }
         public DbSet<Hospital> Hospital { get; set; }
         public DbSet<InstitutionType> InstitutionType { get; set; }
+        public DbSet<Notification> Notification { get; set; }
         public DbSet<Plan> Plan { get; set; }
         public DbSet<PlanCoverage> PlanCoverage { get; set; }
         public DbSet<Policy> Policy { get; set; }
@@ -78,6 +79,9 @@ namespace Avalanche.Infrastructure.Persistence.Contexts
             modelBuilder.Entity<InstitutionType>()
                 .ToTable("InstitutionTypes");
 
+            modelBuilder.Entity<Notification>()
+                .ToTable("Notifications");
+
             modelBuilder.Entity<Plan>()
                 .ToTable("Plans");
 
@@ -120,6 +124,9 @@ namespace Avalanche.Infrastructure.Persistence.Contexts
                 .HasKey(x => x.Id);
 
             modelBuilder.Entity<InstitutionType>()
+                .HasKey(x => x.Id);
+
+            modelBuilder.Entity<Notification>()
                 .HasKey(x => x.Id);
 
             modelBuilder.Entity<Plan>()
@@ -242,6 +249,18 @@ namespace Avalanche.Infrastructure.Persistence.Contexts
                 .HasOne<Status>(x => x.Status)
                 .WithMany(x => x.Hospitals)
                 .HasForeignKey(x => x.StatusId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Notification>()
+                .HasOne<Analyst>(x => x.Analyst)
+                .WithMany(x => x.Notifications)
+                .HasForeignKey(x => x.AssignedAnalyst)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Notification>()
+                .HasOne<Authorization>(x => x.Authorization)
+                .WithMany(x => x.Notifications)
+                .HasForeignKey(x => x.AuthorizationId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Plan>()
