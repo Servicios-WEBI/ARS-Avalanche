@@ -1,4 +1,4 @@
-﻿using Avalanche.Core.Application.Dtos.Authorization;
+﻿using Avalanche.Core.Application.Dtos.Notification;
 using Avalanche.Core.Application.Interfaces.Services;
 using Avalanche.Interface.Authentication.Hubs;
 using Microsoft.AspNetCore.SignalR;
@@ -14,7 +14,7 @@ namespace Avalanche.Interface.Authentication.Services
             _hubContext = hubContext;
         }
 
-        public async Task SendAuthorizationAssignedAsync(string analystSub, AuthorizationNotificationDTO notification)
+        public async Task SendAuthorizationAssignedAsync(string analystSub, NotificationDTO notification)
         {
             await _hubContext.Clients.User(analystSub).SendAsync("AuthorizationAssigned", notification);
         }
