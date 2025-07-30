@@ -5,12 +5,14 @@ using Avalanche.Core.Application.Dtos.Authorization;
 using Avalanche.Core.Application.Dtos.Client;
 using Avalanche.Core.Application.Dtos.Coverage;
 using Avalanche.Core.Application.Dtos.Hospital;
+using Avalanche.Core.Application.Dtos.Notification;
 using Avalanche.Core.Application.Dtos.Plan;
+using Avalanche.Core.Application.Dtos.PlanCoverage;
 using Avalanche.Core.Application.Dtos.Policy;
 using Avalanche.Core.Application.Features.Account.Commands.Authenticate;
-using Avalanche.Core.Application.Features.Account.Commands.RegisterAnalyst;
 using Avalanche.Core.Application.Features.Account.Commands.RegisterAdmin;
-using Avalanche.Core.Application.Features.Affiliate.Command.Add;
+using Avalanche.Core.Application.Features.Account.Commands.RegisterAnalyst;
+using Avalanche.Core.Application.Features.Affiliate.Command.AssosciatePolicy;
 using Avalanche.Core.Application.Features.Authorization.Command.Add;
 using Avalanche.Core.Application.Features.AuthorizationType.Queries.GetAll;
 using Avalanche.Core.Application.Features.Client.Command.Add;
@@ -18,14 +20,12 @@ using Avalanche.Core.Application.Features.Coverage.Command.Add;
 using Avalanche.Core.Application.Features.Coverage.Queries.GetAll;
 using Avalanche.Core.Application.Features.Hospital.Command.Add;
 using Avalanche.Core.Application.Features.InstitutionType.Queries.GetAll;
+using Avalanche.Core.Application.Features.Notification.Queries.GetAll;
 using Avalanche.Core.Application.Features.Plan.Command.Add;
 using Avalanche.Core.Application.Features.Plan.Queries.GetAll;
 using Avalanche.Core.Application.Features.Policy.Command.Add;
 using Avalanche.Core.Application.Features.Status.Queries.GetAll;
 using Avalanche.Core.Domain.Entities;
-using Avalanche.Core.Application.Features.Affiliate.Command.AssosciatePolicy;
-using Avalanche.Core.Application.Dtos.PlanCoverage;
-using Avalanche.Core.Application.Dtos.Notification;
 
 namespace Avalanche.Core.Application.Mappings
 {
@@ -292,6 +292,15 @@ namespace Avalanche.Core.Application.Mappings
             CreateMap<AuthorizationNotificationDTO, NotificationDTO>()
                 .ForMember(x => x.AssignedAnalyst, opt => opt.Ignore())
                 .ReverseMap();
+
+            CreateMap<Notification, GetAllNotificationQueryResponseChild>()
+                .ReverseMap()
+                .ForMember(x => x.Analyst, opt => opt.Ignore())
+                .ForMember(x => x.Authorization, opt => opt.Ignore())
+                .ForMember(x => x.Created, opt => opt.Ignore())
+                .ForMember(x => x.CreatedBy, opt => opt.Ignore())
+                .ForMember(x => x.LastModified, opt => opt.Ignore())
+                .ForMember(x => x.LastModifiedBy, opt => opt.Ignore());
             #endregion
 
             #region Plan
