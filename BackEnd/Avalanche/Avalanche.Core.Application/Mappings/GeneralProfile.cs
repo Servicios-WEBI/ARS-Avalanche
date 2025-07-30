@@ -292,7 +292,7 @@ namespace Avalanche.Core.Application.Mappings
             CreateMap<AuthorizationNotificationDTO, NotificationDTO>()
                 .ForMember(x => x.AssignedAnalyst, opt => opt.Ignore())
                 .ReverseMap();
-
+                
             CreateMap<Notification, GetAllNotificationQueryResponseChild>()
                 .ReverseMap()
                 .ForMember(x => x.Analyst, opt => opt.Ignore())
