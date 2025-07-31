@@ -84,7 +84,7 @@ namespace Avalanche.Infrastructure.Persistence.Repositories
                     .Sum(a => a.ApprovedAmount ?? 0),
                     RejectedAmount = g
                     .Where(a => a.Status.Name == Statuses.Rejected)
-                    .Sum(a => a.ApprovedAmount ?? 0)
+                    .Sum(a => a.ApplicationAmount)
                 })
                 .OrderByDescending(x => x.TotalProcessed) 
                 .Take(top == 0 ? 10 : top)
@@ -117,7 +117,7 @@ namespace Avalanche.Infrastructure.Persistence.Repositories
                     .SumAsync(a => a.ApprovedAmount ?? 0),
                     RejectedAmount = await authorizationsInPeriod
                     .Where(a => a.Status.Name == Statuses.Rejected)
-                    .SumAsync(a => a.ApprovedAmount ?? 0)
+                    .SumAsync(a => a.ApplicationAmount)
                 };
 
                 result.Analysts.Add(performance);
@@ -135,12 +135,8 @@ namespace Avalanche.Infrastructure.Persistence.Repositories
                 .Include(a => a.Hospital)
                 .Include(a => a.Policy)
                 .ThenInclude(p => p.Plan)
+                .Include(p => p.Status)
                 .Where(a => a.ApplicationDate >= start && a.ApplicationDate <= end);
-
-            var byType = await query
-                .GroupBy(a => a.AuthorizationType.Name)
-                .Select(g => new LabelCountDTO { Label = g.Key, Count = g.Count() })
-                .ToListAsync();
 
             var byHospital = await query
                 .GroupBy(a => a.Hospital.Name)
@@ -152,12 +148,23 @@ namespace Avalanche.Infrastructure.Persistence.Repositories
                 .Select(g => new LabelCountDTO { Label = g.Key, Count = g.Count() })
                 .ToListAsync();
 
+            var byStatus = await query
+                .GroupBy(a => a.Status.Name)
+                .Select(g => new LabelCountDTO { Label = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            var byType = await query
+                .GroupBy(a => a.AuthorizationType.Name)
+                .Select(g => new LabelCountDTO { Label = g.Key, Count = g.Count() })
+                .ToListAsync();
+
             return new GetAuthorizationDistributionQueryResponse
             {
                 Period = new BaseReportDTO { Start = start, End = end },
-                ByType = byType,
                 ByHospital = byHospital,
-                ByPlan = byPlan
+                ByPlan = byPlan,
+                ByStatus = byStatus,
+                ByType = byType
             };
         }
     }
