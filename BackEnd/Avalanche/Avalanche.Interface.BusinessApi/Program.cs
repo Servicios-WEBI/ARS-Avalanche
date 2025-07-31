@@ -1,5 +1,7 @@
 using AutoMapper;
 using Avalanche.Core.Application;
+using Avalanche.Core.Application.Constants;
+using Avalanche.Core.Application.Dtos.Common;
 using Avalanche.Core.Application.Helpers;
 using Avalanche.Core.Application.Interfaces.Repositories;
 using Avalanche.Core.Application.Interfaces.Services;
@@ -109,6 +111,26 @@ app.MapHub<NotificationHub>("/hub/notifications");
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
+});
+
+// Middleware personalizado para rutas no definidas
+app.Use(async (context, next) =>
+{
+    await next();
+
+    if (context.Response.StatusCode == 404 && !context.Response.HasStarted)
+    {
+        context.Response.ContentType = "application/json";
+        ErrorDTO errorResponse = new()
+        {
+            Status = "Fallido",
+            Details = [new ErrorDetailsDTO() { Code = ErrorMessages.NotFound, Message = "La ruta solicitada no existe en la API." }]
+        };
+        var json = System.Text.Json.JsonSerializer.Serialize(errorResponse);
+
+        context.Response.ContentLength = null; // Previene conflictos de longitud
+        await context.Response.WriteAsync(json);
+    }
 });
 
 // Seed data
