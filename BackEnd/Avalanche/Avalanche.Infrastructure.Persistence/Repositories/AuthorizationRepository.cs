@@ -84,7 +84,7 @@ namespace Avalanche.Infrastructure.Persistence.Repositories
                     .Sum(a => a.ApprovedAmount ?? 0),
                     RejectedAmount = g
                     .Where(a => a.Status.Name == Statuses.Rejected)
-                    .Sum(a => a.ApprovedAmount ?? 0)
+                    .Sum(a => a.ApplicationAmount)
                 })
                 .OrderByDescending(x => x.TotalProcessed) 
                 .Take(top == 0 ? 10 : top)
@@ -117,7 +117,7 @@ namespace Avalanche.Infrastructure.Persistence.Repositories
                     .SumAsync(a => a.ApprovedAmount ?? 0),
                     RejectedAmount = await authorizationsInPeriod
                     .Where(a => a.Status.Name == Statuses.Rejected)
-                    .SumAsync(a => a.ApprovedAmount ?? 0)
+                    .SumAsync(a => a.ApplicationAmount)
                 };
 
                 result.Analysts.Add(performance);
