@@ -11,6 +11,7 @@ namespace Avalanche.Core.Domain.Entities
         public string AuthorizationTypeId { get; set; }
         public double ApplicationAmount { get; set; }
         public double? ApprovedAmount { get; set; }
+        public int HospitalApplicationId { get; set; }
         public Affiliate Affiliate { get; set; }
         public string AffiliateId { get; set; }
         public Policy Policy { get; set; }

@@ -32,8 +32,9 @@ namespace Avalanche.Core.Application.Services
             };
 
             // Aquí pones tus credenciales reales o las obtienes de la configuración
-            _token = await _healthStateApi.LoginAsync(dto, cancellationToken);
+            var result = await _healthStateApi.LoginAsync(dto, cancellationToken);
 
+            _token = result.Token;
             _expiresAt = GetExpirationFromJwt(_token);
 
             return _token;

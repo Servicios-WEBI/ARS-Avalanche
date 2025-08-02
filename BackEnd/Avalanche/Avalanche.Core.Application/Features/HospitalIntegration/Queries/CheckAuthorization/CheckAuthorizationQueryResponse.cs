@@ -11,7 +11,7 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Queries.CheckA
     public class CheckAuthorizationQueryResponseChild
     {
         [SwaggerSchema(Description = "Número de solicitud")]
-        public string Number { get; set; }
+        public int Number { get; set; }
 
         [SwaggerSchema(Description = "Fecha de aplicación de autorización")]
         public DateOnly ApplicationDate { get; set; }
