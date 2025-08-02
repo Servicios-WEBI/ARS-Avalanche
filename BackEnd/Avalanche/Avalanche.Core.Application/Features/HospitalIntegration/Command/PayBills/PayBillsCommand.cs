@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Avalanche.Core.Application.Constants;
+﻿using Avalanche.Core.Application.Constants;
 using Avalanche.Core.Application.Dtos.Common;
 using Avalanche.Core.Application.Dtos.HospitalIntegration;
 using Avalanche.Core.Application.Interfaces.Repositories;
@@ -50,7 +49,7 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Command.PayBil
                 foreach (var item in command.Bills)
                 {
                     BillDTO bill = new();
-                    var authorization = await _authorizationRepository.GetByIdWithIncludeAsync(t => t.Id == item.AuthorizationNumber, new List<Expression<Func<Domain.Entities.Authorization, object>>>
+                    var authorization = await _authorizationRepository.GetByPropertyWithIncludeAsync(t => t.HospitalApplicationId == item.AuthorizationNumber, new List<Expression<Func<Domain.Entities.Authorization, object>>>
                     {
                         m => m.Hospital,
                         m => m.Status

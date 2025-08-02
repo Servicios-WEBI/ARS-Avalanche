@@ -24,7 +24,7 @@ namespace Avalanche.Core.Application.Dtos.HospitalIntegration
     public class BillDTO
     {
         [SwaggerSchema(Description = "Número de solicitud")]
-        public string AuthorizationNumber { get; set; }
+        public int AuthorizationNumber { get; set; }
 
         [SwaggerSchema(Description = "Estado de recibo")]
         public string Status { get; set; }

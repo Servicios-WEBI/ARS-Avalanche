@@ -12,8 +12,8 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Queries.CheckA
     public class CheckAuthorizationQuery : IRequest<CheckAuthorizationQueryResponse>
     {
         [SwaggerParameter(Description = "Número de solicitud")]
-        [Required(ErrorMessage = "Debe de ingresar el número de solicitud")]
-        public string AuthorizationNumber { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Debe de ingresar el número de solicitud")]
+        public int AuthorizationNumber { get; set; }
     }
 
     public class CheckAuthorizationQueryHandler : IRequestHandler<CheckAuthorizationQuery, CheckAuthorizationQueryResponse>
@@ -31,7 +31,7 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Queries.CheckA
             {
                 CheckAuthorizationQueryResponse result = new();
 
-                var entity = await _authorizationRepository.GetByIdWithIncludeAsync(t => t.Id == query.AuthorizationNumber, new List<Expression<Func<Domain.Entities.Authorization, object>>>
+                var entity = await _authorizationRepository.GetByPropertyWithIncludeAsync(t => t.HospitalApplicationId == query.AuthorizationNumber, new List<Expression<Func<Domain.Entities.Authorization, object>>>
                 {
                     m => m.Affiliate,
                     m => m.AuthorizationType,
@@ -47,7 +47,7 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Queries.CheckA
 
                 result.Authorization = new()
                 {
-                    Number = entity.Id,
+                    Number = entity.HospitalApplicationId,
                     ApplicationDate = entity.ApplicationDate,
                     Status = entity.Status.Name,
                     AuthorizationType = entity.AuthorizationType.Name,
