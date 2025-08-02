@@ -6,6 +6,9 @@ using Avalanche.Core.Application.Interfaces.Repositories;
 using MediatR;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
+using Avalanche.Core.Application.Interfaces.Services;
+using Avalanche.Core.Application.Dtos.HttpClient;
+using System.Net;
 
 namespace Avalanche.Core.Application.Features.Authorization.Command.Update
 {
@@ -46,11 +49,16 @@ namespace Avalanche.Core.Application.Features.Authorization.Command.Update
     public class UpdateAuthorizationCommandHandler : IRequestHandler<UpdateAuthorizationCommand, AuthorizationDTO>
     {
         private readonly IAuthorizationRepository _authorizationRepository;
+        private readonly IStatusRepository _statusRepository;
+        private readonly IHealthStateService _healthStateService;
         private readonly IMapper _mapper;
 
-        public UpdateAuthorizationCommandHandler(IAuthorizationRepository authorizationRepository, IMapper mapper)
+        public UpdateAuthorizationCommandHandler(IAuthorizationRepository authorizationRepository, IStatusRepository statusRepository,
+            IHealthStateService healthStateService, IMapper mapper)
         {
             _authorizationRepository = authorizationRepository;
+            _statusRepository = statusRepository;
+            _healthStateService = healthStateService;
             _mapper = mapper;
         }
 
@@ -64,6 +72,30 @@ namespace Avalanche.Core.Application.Features.Authorization.Command.Update
 
                 if (valueToUpdate == null)
                     throw new Exception(ErrorMessages.NotFound);
+
+                //Actualización para el hospital
+                //Queda comentado mientras el equipo del hospital termina el desarrollo
+                if (valueToUpdate.ApprovedAmount != command.ApprovedAmount || valueToUpdate.StatusId != command.StatusId)
+                {
+                    var status = await _statusRepository.GetByIdAsync(command.StatusId);
+
+                    if (status == null || (!status.Name.Equals(Statuses.Approved) && !status.Name.Equals(Statuses.Rejected)))
+                    {
+                        throw new Exception("No es un estado válido para las autorizaciones");
+                    }
+
+                    UpdateAuthorizationRequestDTO request = new()
+                    {
+                        nuevoEstado = status.Name == Statuses.Approved ? "A" : "R",
+                        montoAprobado = command.ApprovedAmount
+                    };
+
+                    var result = await _healthStateService.UpdateAuthorizationAsync(valueToUpdate.HospitalApplicationId, request);
+                    if (result.Code != HttpStatusCode.NoContent.ToString())
+                    {
+                        throw new Exception(result.Code + ": " +  result.Message);
+                    }
+                }
 
                 valueToUpdate.StatusId = command.StatusId;
                 valueToUpdate.AuthorizationTypeId = command.AuthorizationTypeId;
