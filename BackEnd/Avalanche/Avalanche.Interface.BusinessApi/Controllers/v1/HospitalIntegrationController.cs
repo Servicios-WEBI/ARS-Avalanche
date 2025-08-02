@@ -70,7 +70,7 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
            Summary = "Consultar solicitudes",
            Description = "Permite a los hospitales consultar el estado de las solicitudes"
         )]
-        public async Task<IActionResult> CheckAuthorization(string authorizationNumber)
+        public async Task<IActionResult> CheckAuthorization(int authorizationNumber)
         {
             try
             {

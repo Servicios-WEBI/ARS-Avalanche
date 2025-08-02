@@ -1,7 +1,10 @@
-﻿using Avalanche.Core.Application.Helpers;
+﻿using Avalanche.Core.Application.Clients;
+using Avalanche.Core.Application.Helpers;
+using Avalanche.Core.Application.Interfaces.Clients;
 using Avalanche.Core.Application.Interfaces.Helpers;
 using Avalanche.Core.Application.Interfaces.Services;
 using Avalanche.Core.Application.Services;
+using Avalanche.Core.Domain.Entities;
 using Avalanche.Core.Domain.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,6 +42,13 @@ namespace Avalanche.Core.Application
             services.AddScoped<IPlanCoverageComparisonService, PlanCoverageComparisonService>();
             services.AddScoped<IAffiliateValidationService, AffiliateValidationService>();
             services.AddScoped<IEmailHelper, EmailHelper>();
+            services.AddHttpClient<IHealthStateApiClient, HealthStateApiClient>(c =>
+            {
+                c.BaseAddress = new Uri(healthStateApiSettings.BaseUrl);
+                c.Timeout = TimeSpan.FromSeconds(30);
+            });
+            services.AddSingleton<ITokenService, TokenService>();
+            services.AddScoped<IHealthStateService, HealthStateService>();
             #endregion
         }
     }

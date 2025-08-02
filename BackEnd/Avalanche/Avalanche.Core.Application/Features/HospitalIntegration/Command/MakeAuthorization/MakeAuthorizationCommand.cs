@@ -28,6 +28,10 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Command.MakeAu
         [Required(ErrorMessage = "Debe ingresar el tipo de autorización.")]
         public string AuthorizationType { get; set; }
 
+        [SwaggerParameter(Description = "Id de la solicitud del hospital.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Debe ingresar el id de la solicitud del hospital.")]
+        public int HospitalApplicationId { get; set; }
+
         [SwaggerParameter(Description = "Monto solicitado por el afiliado para esta autorización.")]
         [Required(ErrorMessage = "Debe ingresar el monto solicitado.")]
         public double ApplicationAmount { get; set; }
@@ -115,6 +119,7 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Command.MakeAu
                     AssignedAnalyst = analyst.Id,
                     AuthorizationTypeId = type.Id,
                     HospitalId = hospital.Id,
+                    HospitalApplicationId = command.HospitalApplicationId,
                     PolicyId = validationResult.Policy.Id
                 };
 
@@ -126,7 +131,7 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Command.MakeAu
 
                 var policyCoverages = planCoverages.Where(p => p.PlanId == validationResult.Policy.PlanId).ToList();
 
-                if(!policyCoverages.Any(p => p.Coverage.Name == command.AuthorizationType))
+                if(!policyCoverages.Any(p => p.Coverage.Name == type.Name))
                 {
                     var rejected = await _statusRepository.GetByPropertyAsync(s => s.Name == Statuses.Rejected);
                     authorizationToAdd.StatusId = rejected.Id;
@@ -135,7 +140,7 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Command.MakeAu
                 }
                 else
                 {
-                    var coverage = policyCoverages.FirstOrDefault(p => p.Coverage.Name == command.AuthorizationType);
+                    var coverage = policyCoverages.FirstOrDefault(p => p.Coverage.Name == type.Name);
 
                     if (coverage.AmountLimit > command.ApplicationAmount && coverage.YearFrequencyLimit == 0 && coverage.CoveragePercentage > 0)
                     {
@@ -176,7 +181,7 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Command.MakeAu
                 response.DocumentType = command.DocumentType;
                 response.DocumentNumber = command.DocumentNumber;
                 response.PolicyNumber = validationResult.Policy.Number;
-                response.AuthorizationType = command.AuthorizationType.ToUpper();
+                response.AuthorizationType = type.Name;
                 response.ApplicationAmount = authorization.ApplicationAmount;
                 response.ApprovedAmount = authorization.ApprovedAmount;
                 response.ApplicationDate = authorization.ApplicationDate;

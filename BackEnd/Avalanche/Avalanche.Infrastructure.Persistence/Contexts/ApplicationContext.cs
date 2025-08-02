@@ -287,6 +287,8 @@ namespace Avalanche.Infrastructure.Persistence.Contexts
 
             modelBuilder.Entity<Authorization>().HasIndex(x => x.AssignedAnalyst);
 
+            modelBuilder.Entity<Authorization>().HasIndex(x => x.HospitalApplicationId).IsUnique();
+
             modelBuilder.Entity<Client>().HasIndex(x => x.DocumentNumber).IsUnique();
 
             modelBuilder.Entity<Policy>().HasIndex(x => x.Number).IsUnique();
