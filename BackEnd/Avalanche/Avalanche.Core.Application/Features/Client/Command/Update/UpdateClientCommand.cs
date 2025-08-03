@@ -53,14 +53,16 @@ namespace Avalanche.Core.Application.Features.Client.Command.Update
     public class UpdateClientCommandHandler : IRequestHandler<UpdateClientCommand, ClientDTO>
     {
         private readonly IClientRepository _clientRepository;
+        private readonly IAffiliateRepository _affiliateRepository;
         private readonly IDocumentTypeRepository _documentTypeRepository;
         private readonly IStatusRepository _statusRepository;
         private readonly IMapper _mapper;
 
-        public UpdateClientCommandHandler(IClientRepository clientRepository, IDocumentTypeRepository documentTypeRepository,
-            IStatusRepository statusRepository, IMapper mapper)
+        public UpdateClientCommandHandler(IClientRepository clientRepository, IAffiliateRepository affiliateRepository,
+            IDocumentTypeRepository documentTypeRepository, IStatusRepository statusRepository, IMapper mapper)
         {
             _clientRepository = clientRepository;
+            _affiliateRepository = affiliateRepository;
             _documentTypeRepository = documentTypeRepository;
             _statusRepository = statusRepository;
             _mapper = mapper;
@@ -99,6 +101,24 @@ namespace Avalanche.Core.Application.Features.Client.Command.Update
                 valueToUpdate.StatusId = status.Id;
 
                 await _clientRepository.UpdateAsync(valueToUpdate, valueToUpdate.Id);
+
+                try
+                {
+                    var affiliate = await _affiliateRepository.GetByIdAsync(valueToUpdate.Id);
+
+                    affiliate.FirstName = command.FirstName;
+                    affiliate.MiddleName = command.MiddleName;
+                    affiliate.LastName = command.LastName;
+                    affiliate.DocumentTypeId = documentType.Id;
+                    affiliate.DocumentNumber = command.DocumentNumber;
+                    affiliate.StatusId = status.Id;
+
+                    await _affiliateRepository.UpdateAsync(affiliate, affiliate.Id);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Hubo un error al actualizar datos del afiliado");
+                }
 
                 response = _mapper.Map<ClientDTO>(valueToUpdate);
                 response.DocumentType = command.DocumentType;
