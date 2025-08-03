@@ -18,7 +18,7 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
     [SwaggerTag("Manejo de planes")]
     public class PlanController : BaseApiController
     {
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator, Analyst")]
         [HttpGet()]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetAllPlanQueryResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDTO))]
@@ -47,7 +47,7 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
 
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator, Analyst")]
         [HttpGet("{id}/coverages")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetCoveragesByIdPlanQueryResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDTO))]
