@@ -55,15 +55,18 @@ namespace Avalanche.Core.Application.Features.Affiliate.Command.Update
     {
         private readonly IAffiliateRepository _affiliateRepository;
         private readonly IAffiliatePolicyRepository _affiliatePolicyRepository;
+        private readonly IClientRepository _clientRepository;
         private readonly IDocumentTypeRepository _documentTypeRepository;
         private readonly IStatusRepository _statusRepository;
         private readonly IMapper _mapper;
 
         public UpdateAffiliateCommandHandler(IAffiliateRepository affiliateRepository, IAffiliatePolicyRepository affiliatePolicyRepository,
-            IDocumentTypeRepository documentTypeRepository, IStatusRepository statusRepository, IMapper mapper)
+            IClientRepository clientRepository, IDocumentTypeRepository documentTypeRepository, IStatusRepository statusRepository,
+            IMapper mapper)
         {
             _affiliateRepository = affiliateRepository;
             _affiliatePolicyRepository = affiliatePolicyRepository;
+            _clientRepository = clientRepository;
             _documentTypeRepository = documentTypeRepository;
             _statusRepository = statusRepository;
             _mapper = mapper;
@@ -91,13 +94,14 @@ namespace Avalanche.Core.Application.Features.Affiliate.Command.Update
                     throw new Exception($"No se encontró el estado: {command.Status}");
                 }
 
+                var affiliatePolicy = await _affiliatePolicyRepository.GetByPropertyAsync(a => a.AffiliateId == valueToUpdate.Id);
+
                 /*Pedazo de código para actualizar el estado en la entidad AffiliatePolicy en caso de haber realizado
                  una actualización para mantener la integridad*/
                 if (valueToUpdate.StatusId != status.Id)
                 {
                     try
                     {
-                        var affiliatePolicy = await _affiliatePolicyRepository.GetByPropertyAsync(a => a.AffiliateId == valueToUpdate.Id);
                         affiliatePolicy.StatusId = status.Id;
 
                         await _affiliatePolicyRepository.UpdateAsync(affiliatePolicy, affiliatePolicy.Id);
@@ -119,6 +123,26 @@ namespace Avalanche.Core.Application.Features.Affiliate.Command.Update
                 valueToUpdate.ClientId = command.ClientId;
 
                 await _affiliateRepository.UpdateAsync(valueToUpdate, valueToUpdate.Id);
+
+                if (affiliatePolicy.IsPrincipal)
+                {
+                    try
+                    {
+                        var client = await _clientRepository.GetByIdAsync(valueToUpdate.Id);
+
+                        client.FirstName = command.FirstName;
+                        client.MiddleName = command.MiddleName;
+                        client.LastName = command.LastName;
+                        client.DocumentTypeId = documentType.Id;
+                        client.DocumentNumber = command.DocumentNumber;
+
+                        await _clientRepository.UpdateAsync(client, client.Id);
+                    }
+                    catch(Exception ex)
+                    {
+                        throw new Exception("Hubo un error al actualizar el cliente");
+                    }
+                }
 
                 response = _mapper.Map<AffiliateDTO>(valueToUpdate);
                 response.DocumentType = command.DocumentType;

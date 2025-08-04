@@ -1,7 +1,9 @@
 ﻿using Avalanche.Core.Application.Constants;
 using Avalanche.Core.Application.Dtos.Common;
+using Avalanche.Core.Application.Dtos.Email;
 using Avalanche.Core.Application.Dtos.HospitalIntegration;
 using Avalanche.Core.Application.Dtos.Notification;
+using Avalanche.Core.Application.Interfaces.Helpers;
 using Avalanche.Core.Application.Interfaces.Repositories;
 using Avalanche.Core.Application.Interfaces.Services;
 using MediatR;
@@ -52,12 +54,15 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Command.MakeAu
         private readonly IAnalystRepository _analystRepository;
         private readonly INotificationSender _notificationSender;
         private readonly IAccountService _accountService;
+        private readonly IEmailService _emailService;
+        private readonly IEmailHelper _emailHelper;
         private readonly ILogger<MakeAuthorizationCommandHandler> _logger;
 
         public MakeAuthorizationCommandHandler(IAffiliateValidationService validationService, IPlanCoverageRepository planCoverageRepository,
             IAuthorizationRepository authorizationRepository, IAuthorizationTypeRepository authorizationTypeRepository,
             IHospitalRepository hospitalRepository, IStatusRepository statusRepository, IAnalystRepository analystRepository,
-            INotificationSender notificationSender, IAccountService accountService, ILogger<MakeAuthorizationCommandHandler> logger)
+            INotificationSender notificationSender, IAccountService accountService, IEmailService emailService,
+            IEmailHelper emailHelper, ILogger<MakeAuthorizationCommandHandler> logger)
         {
             _validationService = validationService;
             _planCoverageRepository = planCoverageRepository;
@@ -68,6 +73,8 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Command.MakeAu
             _analystRepository = analystRepository;
             _notificationSender = notificationSender;
             _accountService = accountService;
+            _emailService = emailService;
+            _emailHelper = emailHelper;
             _logger = logger;
         }
 
@@ -157,6 +164,31 @@ namespace Avalanche.Core.Application.Features.HospitalIntegration.Command.MakeAu
                 }
 
                 var authorization = await _authorizationRepository.AddAsync(authorizationToAdd);
+
+                if (response.AuthorizationStatus == "Pendiente")
+                {
+                    try
+                    {
+                        AuthorizationEmail email = new()
+                        {
+                            AuthorizationId = authorization.HospitalApplicationId,
+                            AnalystName = analyst.FullName,
+                            ApplicationAmount = authorization.ApplicationAmount,
+                            AuthorizationType = command.AuthorizationType
+                        };
+
+                        await _emailService.SendAsync(new EmailRequest()
+                        {
+                            To = analyst.Email,
+                            Body = _emailHelper.MakeEmailForNewAuthorization(email),
+                            Subject = "¡Nueva Solicitud Asignada - ARS Avalanche!"
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Hubo un error mientras se intentó enviar correo al analista");
+                    }
+                }
 
                 try
                 {
