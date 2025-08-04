@@ -1,4 +1,6 @@
 ﻿using Avalanche.Core.Application.Dtos.Account;
+using Avalanche.Core.Application.Dtos.Email;
+using Avalanche.Core.Application.Interfaces.Helpers;
 using Avalanche.Core.Application.Interfaces.Services;
 using MediatR;
 using Swashbuckle.AspNetCore.Annotations;
@@ -16,10 +18,14 @@ namespace Avalanche.Core.Application.Features.Account.Commands.ChangePassword
 	public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand, ResetPasswordResponse>
 	{
 		private readonly IAccountService _accountService;
+        private readonly IEmailService _emailService;
+        private readonly IEmailHelper _emailHelper;
 
-		public ChangePasswordCommandHandler(IAccountService accountService)
+        public ChangePasswordCommandHandler(IAccountService accountService, IEmailService emailService, IEmailHelper emailHelper)
 		{
 			_accountService = accountService;
+			_emailService = emailService;
+			_emailHelper = emailHelper;
 		}
 
 
@@ -29,7 +35,15 @@ namespace Avalanche.Core.Application.Features.Account.Commands.ChangePassword
 			try
 			{
 				response = await _accountService.ChangePasswordAsync(command.NewPassword);
-				return response;
+
+                await _emailService.SendAsync(new EmailRequest()
+                {
+                    To = response.Email,
+                    Body = _emailHelper.MakeEmailForChange(response.FullName),
+                    Subject = "¡Cambio de Contraseña Exitoso - ARS Avalanche!"
+                });
+
+                return response;
 			}
 			catch (Exception ex)
 			{

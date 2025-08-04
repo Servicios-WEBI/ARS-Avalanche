@@ -4,7 +4,6 @@ using Avalanche.Core.Application.Dtos.Common;
 using Avalanche.Core.Application.Dtos.Email;
 using Avalanche.Core.Application.Enums;
 using Avalanche.Core.Application.Helpers;
-using Avalanche.Core.Application.Interfaces.Helpers;
 using Avalanche.Core.Application.Interfaces.Services;
 using Avalanche.Core.Domain.Settings;
 using Avalanche.Infrastructure.Identity.Entities;
@@ -253,17 +252,13 @@ namespace Avalanche.Infrastructure.Identity.Services
                 _httpContextAccessor.HttpContext.Session.SetString("confirmCode", code);
                 _httpContextAccessor.HttpContext.Session.SetString("user", user.Id);
 
+                response.FullName = user.FirstName + " " + user.LastName;
+                response.Email = user.Email;
+                response.Code = code;
                 response.IsSuccess = true;
-                await _emailService.SendAsync(new EmailRequest()
-                {
-                    To = user.Email,
-                    Body = EmailHelper.MakeEmailForReset(user.FirstName, user.LastName, code),
-                    Subject = "Código de Confirmación"
-                });
 
-
-
-                _logger.LogInformation("Envío de código finalizado correctamente"); return response;
+                _logger.LogInformation("Envío de código finalizado correctamente"); 
+                return response;
             }
             catch (Exception ex)
             {
@@ -313,15 +308,11 @@ namespace Avalanche.Infrastructure.Identity.Services
                     return response;
                 }
 
-                _logger.LogInformation("Restablecimiento de contraseña finalizado correctamente");
+                response.FullName = user.FirstName + " " + user.LastName;
+                response.Email = user.Email;
                 response.IsSuccess = true;
-                await _emailService.SendAsync(new EmailRequest()
-                {
-                    To = user.Email,
-                    Body = EmailHelper.MakeEmailForChange(user.FirstName, user.LastName),
-                    Subject = "Cambio de Contraseña"
-                });
 
+                _logger.LogInformation("Restablecimiento de contraseña finalizado correctamente");
                 return response;
             }
             catch (Exception ex)
