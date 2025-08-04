@@ -13,7 +13,7 @@ namespace Avalanche.Interface.BusinessApi.Controllers.v1
     [SwaggerTag("Manejo de estados")]
     public class StatusController : BaseApiController
     {
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator, Analyst")]
         [HttpGet()]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetAllStatusQueryResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDTO))]

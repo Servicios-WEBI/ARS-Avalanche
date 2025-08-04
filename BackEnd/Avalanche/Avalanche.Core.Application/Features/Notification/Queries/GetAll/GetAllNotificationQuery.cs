@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Avalanche.Core.Application.Interfaces.Repositories;
 using MediatR;
+using System.Linq.Expressions;
 
 namespace Avalanche.Core.Application.Features.Notification.Queries.GetAll
 {
@@ -30,14 +31,28 @@ namespace Avalanche.Core.Application.Features.Notification.Queries.GetAll
 
                 if (!string.IsNullOrEmpty(query.AssignedAnalyst))
                 {
-                    getAlls = await _notificationRepository.GetAllByPropertyAsync(n => n.AssignedAnalyst == query.AssignedAnalyst);
+                    getAlls = await _notificationRepository.GetAllByPropertyWithIncludeAsync(n => n.AssignedAnalyst == query.AssignedAnalyst,
+                    new List<Expression<Func<Domain.Entities.Notification, object>>>
+                    {
+                        n => n.Analyst
+                    });
                 }
                 else
                 {
-                    getAlls = await _notificationRepository.GetAllAsync();
+                    getAlls = await _notificationRepository.GetAllWithIncludeAsync(new List<Expression<Func<Domain.Entities.Notification, object>>>
+                    {
+                        n => n.Analyst
+                    });
                 }
                 
-                var notification = _mapper.Map<List<GetAllNotificationQueryResponseChild>>(getAlls.OrderByDescending(x => x.Created).ToList());
+                var notification = getAlls.OrderByDescending(x => x.Created).Select(n => new GetAllNotificationQueryResponseChild()
+                {
+                    Id = n.Id,
+                    AuthorizationId = n.AuthorizationId,
+                    AssignedAnalyst = n.Analyst.FullName,
+                    AssignedAnalystId = n.AssignedAnalyst,
+                    NotificationDate = n.NotificationDate
+                }).ToList();
 
                 result.Notifications = notification;
 
