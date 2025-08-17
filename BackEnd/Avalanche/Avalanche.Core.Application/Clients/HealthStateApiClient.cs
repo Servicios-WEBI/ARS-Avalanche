@@ -52,7 +52,7 @@ namespace Avalanche.Core.Application.Clients
                 var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = await _httpClient.PutAsync($"/api/Solicitud/{id}/estado", content, cancellationToken);
-                if (response.StatusCode != HttpStatusCode.NoContent)
+                if (response.StatusCode != HttpStatusCode.OK)
                 {
                     result.Code = response.StatusCode.ToString();
                     result.Message = "Hubo un error al tratar de actualizar la solicitud en el hospital";
