@@ -75,7 +75,7 @@ namespace Avalanche.Core.Application.Features.Authorization.Command.Update
 
                 //Actualización para el hospital
                 //Queda comentado mientras el equipo del hospital termina el desarrollo
-                /*if (valueToUpdate.ApprovedAmount != command.ApprovedAmount || valueToUpdate.StatusId != command.StatusId)
+                if (valueToUpdate.ApprovedAmount != command.ApprovedAmount || valueToUpdate.StatusId != command.StatusId)
                 {
                     var status = await _statusRepository.GetByIdAsync(command.StatusId);
 
@@ -91,11 +91,11 @@ namespace Avalanche.Core.Application.Features.Authorization.Command.Update
                     };
 
                     var result = await _healthStateService.UpdateAuthorizationAsync(valueToUpdate.HospitalApplicationId, request);
-                    if (result.Code != HttpStatusCode.NoContent.ToString())
+                    if (result.Code != HttpStatusCode.OK.ToString())
                     {
                         throw new Exception(result.Code + ": " +  result.Message);
                     }
-                }*/
+                }
 
                 valueToUpdate.StatusId = command.StatusId;
                 valueToUpdate.AuthorizationTypeId = command.AuthorizationTypeId;
